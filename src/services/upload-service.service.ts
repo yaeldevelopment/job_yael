@@ -1,24 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, switchMap, tap, throwError } from 'rxjs';
-
+import  apiURL  from '../models/api';
 @Injectable({
   providedIn: 'root'
 })
 export class UploadService {
   private cloudName = 'drtxmwrmb'; 
-  private apiUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/upload`;
-  private signatureUrl = 'https://localhost:7054/api/cloudinary/generate-signature'; // הכתובת של ה-API ב-C#
+  private api:string="";
   // "CloudName": "drtxmwrmb",
   // "ApiKey": "881122212878697",
   // "ApiSecret": "FNISNl6iafJHwhCJ51USobCbCaY"
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.api=apiURL+'api/';
+ }
 
   uploadPDF(file: File,email:string): Observable<{message:string,path:string}> {
     const formData = new FormData();
     formData.append('file', file);
   
-    return this.http.post<{message:string,path:string}>(`https://localhost:7054/api/cloudinary/upload?email=${email}`, formData);
+    return this.http.post<{message:string,path:string}>(this.api+`cloudinary/upload?email=${email}`, formData);
   }
 
 }
