@@ -1,4 +1,4 @@
-<!doctype html>
+export default `<!doctype html>
 <html lang="he" data-beasties-container="">
 <head>
   <meta charset="utf-8">
@@ -11,3 +11,4 @@
   <app-root></app-root>
 <script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-ZVDVNXE4.js" type="module"></script></body>
 </html>
+`;
