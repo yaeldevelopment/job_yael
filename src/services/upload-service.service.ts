@@ -8,13 +8,9 @@ import  apiURL  from '../models/api';
 export class UploadService {
   private cloudName = 'drtxmwrmb'; 
   private api:string="";
-  // "CloudName": "drtxmwrmb",
-  // "ApiKey": "881122212878697",
-  // "ApiSecret": "FNISNl6iafJHwhCJ51USobCbCaY"
   constructor(private http: HttpClient) {
     this.api=apiURL+'api/';
  }
-
   uploadPDF(file: File,email:string): Observable<{message:string,path:string}> {
     const formData = new FormData();
     formData.append('file', file);
