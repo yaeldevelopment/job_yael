@@ -1,0 +1,29 @@
+
+@if (isLoggedIn$ | async; as is_login) {
+  
+    @if (is_login === 3) {
+      <div class="spinner">טוען...</div>
+    }
+    @else {
+        <nav>
+      <ul>
+        <li><a href="/">דרושים</a></li>
+        @if (is_login === 1) {
+          <li><a href="/התחברות">כניסה לאזור אישי</a></li>
+        }
+        @else {
+          <li class="dropdown">
+            <button class="my_details">האזור האישי שלך</button>
+            <ul class="dropdown-menu">
+              <li (click)="openDetails()">פרטים אישיים</li>
+              <li (click)="openConfirmationDialog()">התנתק</li>
+            </ul>
+          </li>
+        }
+      </ul>
+    </nav>
+    }
+  }
+  @else {
+
+  }

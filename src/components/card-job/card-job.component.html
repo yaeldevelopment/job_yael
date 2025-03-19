@@ -1,0 +1,39 @@
+<div class="job-card">
+    <div class="job-header">
+      <h2>{{ job.title }}</h2>
+      <h3>{{ job.componay }}</h3>
+      <p class="date">תאריך פרסום:{{ job.publication_date }}</p>
+    </div>
+  
+    <div class="job-details">
+      <p><strong>מיקום:</strong> {{ job.job_location.join(', ') }}</p>
+      <p><strong>סוג משרה:</strong> {{ job.job_type }}</p>
+      @if(job.salary){
+      <p ><strong>שכר:</strong> {{ job.salary }}</p>
+      }
+
+
+        @if(job.additional_conditions){
+      <p>
+        <strong>תנאים נוספים:</strong> {{ job.additional_conditions }}
+      </p>}
+    </div>
+  
+    <div class="job-description" [innerHTML]="job.html_word"></div>
+  @if(isLoading){
+    <div class="progress-container" >
+      <div class="progress-bar" [style.width.%]="progress"></div>
+    </div>
+  }
+  
+    
+    @if(job.jobSentStatus){
+            <button class="job-button-send" (click)="Send_Resume(job)"    [disabled]="buttonDisabled">הגשת מועמדות</button>
+    }@else{
+<div class="resume_past">הגשתה כבר קורות חיים למשרה זו</div>
+    }
+    
+
+
+  </div>
+  

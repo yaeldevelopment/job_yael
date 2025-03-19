@@ -1,0 +1,101 @@
+@import "../../varibles.scss";
+nav {
+    background-color: $back_color;
+    padding: 20px;
+}
+ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    margin: 0;
+    justify-content: space-around;
+    text-align: right;
+    align-items: center;
+}
+li {
+    display: block;
+
+}
+a {
+    text-decoration: none;
+    color: $text_color !important;
+    font-size: 18px;
+    cursor: pointer;
+}
+a:hover {
+    text-decoration: underline;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+  
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      min-width: 200px;
+      padding: 5px 0;
+      list-style: none;
+      z-index: 1000;
+  
+      li {
+        padding: 10px;
+        cursor: pointer;
+        &:hover {
+          font-weight: bold;
+        }
+      }
+    }
+  
+    &:hover .dropdown-menu {
+      display: block;
+    }
+  }
+  .my_details{
+    min-width: 200px;
+    cursor: pointer;
+    padding: 0px;
+    border-radius: 5px;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    height: 50px;
+    transition: 0.3s;
+    border:1px solid #68235b;
+    color: $back_color;
+  }
+  .spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top: 4px solid #4CAF50; // אפשר לשנות לצבע המותג שלך
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+  

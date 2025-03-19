@@ -1,0 +1,188 @@
+@import "../../varibles.scss";
+label {
+  cursor: pointer;
+  padding: 0px;
+  border-radius: 5px;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+label.selected {
+  background-color: $back_color;
+  color: white;
+}
+
+.form-container {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f8f9fa;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    max-width: 40%;
+    box-shadow: 0px 1px 4px 1px;
+    padding: 30px;
+    border-radius: 12px;
+    .label_radio{
+      padding: 5px 0px !important; 
+    }
+.error_message{
+    margin: 0;
+    min-height: 19px;
+}
+    div {
+      margin: 0;
+      padding: 0;
+    }
+    input[type='radio'] {
+      display: none;
+    }
+    input {
+        width: 100%;
+        /* padding: 7px; */
+        padding: 0;
+        height: 45px;
+        margin: 5px 0px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    
+    }
+  
+    button {        width: 100%;
+      background-color: $back_color;
+      color: white;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  
+    button:disabled {
+      background-color: #ccc;
+    }
+  
+    small {
+      color: red;
+    }
+  }
+  .custom-datepicker {
+    width: 100%; // התאמה מלאה לרוחב ההורה
+    margin: 10px auto; // שמירה על מרווחים
+    
+    .mat-mdc-form-field {
+      display: flex;
+      align-items: center;
+    }
+  
+    // עיצוב הקופסה של התאריך
+    .mat-mdc-text-field-wrapper {
+      border-radius: 8px; // מעגל את הקצוות של התיבה
+      background: #fff; // רקע לבן
+      border: 1px solid #ccc; // מסגרת עדינה
+      padding: 5px 10px; // ריווח פנימי
+      transition: border 0.3s ease-in-out;
+    }
+  
+    .mat-mdc-text-field-wrapper:hover {
+      border-color: $back_color; // צבע כחול עדין בעת ריחוף
+    }
+  
+    .mat-mdc-text-field-wrapper.mat-focused {
+      border-color: $back_color; // צבע כחול כהה בעת פוקוס
+      box-shadow: 0 0 5px rgba(25, 118, 210, 0.3); // אפקט הארה עדין בפוקוס
+    }
+  
+    // עיצוב שדה הקלט
+    input {
+      padding-right: 5%;
+      font-size: 24px;
+      margin: 0;
+      color: #333;
+      cursor: pointer; // מונע הזנה ידנית ונותן חוויית משתמש טובה יותר
+
+    }
+  
+    // עיצוב הכפתור של ה-datepicker
+    .mat-mdc-icon-button {
+      color: $back_color !important; // צבע הכפתור
+    }
+  
+    // עיצוב האייקון של פתיחת התאריך
+    .mat-datepicker-toggle {
+      color: $back_color !important; // וידוא שהצבע יעבוד
+    }
+  
+
+  }
+  .file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px;
+    width: 100%;
+    min-height: 80px; // גובה קבוע למניעת שינוי לאחר העלאת קובץ
+    border: 2px dashed $back_color;
+    border-radius: 10px;
+    background: #f9f9f9;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+  
+    &:hover {
+      background: #e3f2fd;
+      border-color:$back_color;
+    }
+  
+    .file-label {
+      color: $back_color;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  
+    .file-input {
+      display: none; // הסתרת ה-input המקורי
+    }
+  
+    .file-name {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+      background: #e3f2fd;
+      padding: 5px 10px;
+      border-radius: 5px;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  
+    .error_message {
+      color: red;
+      font-weight: bold;
+    }
+  }
+  
+  .forgot-password {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+  
+    &:hover {
+      color: #0056b3;
+    }
+  }
+  
+  

@@ -1,0 +1,38 @@
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+      <h2 class="text-center mb-4">פרטים אישיים</h2>
+  
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>שם פרטי:</strong> {{ employee.first_name }}</p>
+          <p><strong>שם משפחה:</strong> {{ employee.last_name }}</p>
+          <p><strong>תאריך לידה:</strong> {{ employee.birth_date }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>מייל:</strong> {{ employee.mail }}</p>
+          <p><strong>טלפון:</strong> {{ employee.phone }}</p>
+ 
+        </div>
+      </div>
+      <div class="upload-container">       
+        <h3>📄 קובץ קיים</h3>
+
+        @if(resumeUrl!=""){
+          <iframe [src]="sanitizer.bypassSecurityTrustResourceUrl(resumeUrl)" width="100%" height="400px"></iframe>
+        }
+        @else if(!resumeUrl) {
+           <p >❌ אין קובץ קיים למשתמש זה.</p>
+        }
+       
+      
+        <h3>📤 העלאת קובץ חדש</h3>
+        <input type="file" (change)="onFileSelected($event)" accept=".pdf">
+        <button [disabled]="!selectedFile" (click)="uploadFile()">🔄 החלפת קובץ</button>
+      </div>
+  
+
+
+
+    </div>
+  </div>
+  

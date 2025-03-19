@@ -1,0 +1,33 @@
+
+@import "../../varibles.scss";
+.not-found-container {
+  text-align: center;
+  margin-top: 50px;
+  color: $black;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+
+  .home-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: $back_color;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+
+    &:hover {
+      background-color: darken($back_color, 10%);
+    }
+  }
+}

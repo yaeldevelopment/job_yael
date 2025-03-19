@@ -1,0 +1,74 @@
+/* You can add global styles to this file, and also import other style files */
+@import "bootstrap/scss/bootstrap";
+@import "./varibles.scss";
+body{
+   direction: rtl;     font-family: sans-serif;
+   font-size: 20px;
+   text-align: right;
+}
+h1,h2,h3,h4{
+    text-align: center;
+    margin: 15px;
+}
+.container{
+    .row{
+      justify-content: center;  margin: 80px auto; 
+    }
+   
+
+}
+.button_default{
+cursor: pointer;
+    padding: 0px;
+    border-radius: 5px;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    transition: 0.3s;
+    background-color: #68235b;
+    color: white;}
+    .mdc-notched-outline__trailing{
+        border-left: 1px solid !important;
+      }
+      .mat-datepicker-content{
+        transform-origin: left bottom;
+        z-index: 11111111111111111;
+        background: #ffffff;
+    
+      }
+      .mat-mdc-form-field
+      {width: 100%;
+        input{
+    height: auto !important;
+        }
+      }
+      .mat-datepicker-content-container{
+        background-color: #ffffff;
+        box-shadow: 1px 3px 6px 4px;
+        margin-top: 5px;
+        border-radius: 12px;    
+      }
+      .mdc-notched-outline__trailing{
+        border-right: none !important;
+      }  .mdc-notched-outline__notch{
+        padding-right: 5%;
+      }
+      .mat-mdc-form-field-subscript-wrapper{
+        display: none !important;
+      }
+      .mat-mdc-form-field-infix{
+        height: 45px;
+      }.rtl-popup {
+        direction: rtl;
+        text-align: right;
+        font-family: 'Arial', sans-serif;
+      }
+      .ngx-pagination{
+        margin: 3% auto;
+        display: flex;
+        justify-content: center;
+         .current{
+        background-color: $back_color !important;
+        }}
+      

@@ -1,0 +1,301 @@
+<div class="container">
+  <div class="card row">
+  <div class="row">
+    <div class="col-6">
+      <label 
+        [class.selected]="step != 1" class="label_radio"
+        (click)="selectLoginType(0)" >
+        משתמש קיים
+      </label>
+      <input type="radio" name="login_type" checked (change)="selectLoginType(1)">
+    </div>
+    
+    <div class="col-6">
+      <label 
+        [class.selected]="step === 1"
+        (click)="selectLoginType(1)" class="label_radio" >
+        משתמש חדש
+      </label>
+      <input type="radio" name="login_type" (change)="selectLoginType(1)">
+    </div>
+</div>
+    <div>
+
+      @if(step===0){
+      <form  [formGroup]="loginForm" class="loginForm" (ngSubmit)="onSubmit()">
+        <h2>כניסה למערכת</h2>
+    <div>
+      <label for="email">מייל</label>
+      <input id="email" formControlName="email" type="email" /><div class="error_message">
+      @if(loginForm.get('email')?.invalid || loginForm.get('email')?.touched){
+        
+        @if(loginForm.get('email')?.errors?.['required']){
+   <small >הכנס מייל</small>}
+   @else if(loginForm.get('email')?.errors?.['email']){
+        <small>הכנס מייל תקין</small>
+      }
+ 
+    }
+   </div>
+      </div>
+
+  
+    <div>
+      <label for="password">סיסמא</label>
+      <input id="password" formControlName="password" type="password" />  
+       <div class="error_message">
+      @if(loginForm.get('password')?.invalid || loginForm.get('password')?.touched){
+   
+        @if(loginForm.get('password')?.errors?.['required']){
+        <small >הכנס סיסמא</small>
+
+        }
+        @else if(loginForm.get('password')?.errors?.['minlength']){
+        <small>
+          הסיסמא חייבת להכיל לפחות 6 תווים
+        </small>}
+     
+    } </div>
+    </div>
+    <p class="message_tey"></p><!-- לינק "שכחתי סיסמה" מופיע רק אם forgotPasswordVisible = true -->
+   @if(forgotPasswordVisible){
+       <span  class="forgot-password" (click)="showForgotPasswordForm()">
+      שכחתי סיסמה
+    </span>
+   }
+ 
+    <button type="submit" [disabled]="loginForm.invalid">התחברות</button>
+  </form>}  @else if(step===1){
+
+    <h2>משתמש חדש</h2>
+    <form  [formGroup]="CreateUserForm" class="" (ngSubmit)="CreateUser()">
+  <div>
+    <label for="email">מייל</label>
+    <input id="email" formControlName="email" type="email" /><div class="error_message">
+    @if(CreateUserForm.get('email')?.invalid || CreateUserForm.get('email')?.touched){
+      
+      @if(CreateUserForm.get('email')?.errors?.['required']){
+ <small >הכנס מייל</small>}
+ @else if(CreateUserForm.get('email')?.errors?.['email']){
+      <small>הכנס מייל תקין</small>
+    }
+
+  }
+ </div>
+    </div>
+
+    <div>
+      <label for="password">סיסמא</label>
+      <input id="password" formControlName="password" type="password" />
+      <div class="error_message">
+        @if(CreateUserForm.get('password')?.hasError('required')){ 
+             <small >הכנס סיסמא</small>
+        } 
+        @else if (CreateUserForm.get('password')?.hasError('minlength')) {
+                  <small>הסיסמא חייבת להכיל לפחות 6 תווים</small>
+        }
+        @else if (CreateUserForm.get('password')?.hasError('weakPassword')) {
+          <small>הסיסמא חייבת לכלול אות גדולה, אות קטנה, מספר ותו מיוחד</small>
+}
+
+
+      </div>
+    </div>
+    
+    <div>
+      <label for="verification">אימות סיסמא</label>
+      <input id="verification" formControlName="verification" type="password" />
+      <div class="error_message">
+        @if(CreateUserForm.get('verification')?.hasError('required')){  
+               <small >הכנס שוב סיסמא</small>
+        }
+        @else if(CreateUserForm.hasError('passwordsNotMatching') && CreateUserForm.get('verification')?.touched) {
+          <small>הסיסמאות אינן תואמות</small>
+        }
+
+ 
+       
+      </div>
+    </div>
+  <div>
+ 
+    <label for="first_name">שם פרטי</label>
+    <input id="first_name" formControlName="first_name" type="text" />  
+     <div class="error_message">
+    @if(CreateUserForm.get('first_name')?.invalid || CreateUserForm.get('first_name')?.touched){
+ 
+      @if(CreateUserForm.get('first_name')?.errors?.['required']){
+      <small>הכנס שם פרטי</small>
+
+      }
+      @else if(CreateUserForm.get('first_name')?.errors?.['minlength']){
+      <small>
+        השם פרטי חייבת להכיל לפחות 2 תווים
+      </small>}
+   
+  } </div>
+  </div>
+
+
+  <div>
+ 
+    <label for="last_name">שם משפחה</label>
+    <input id="last_name" formControlName="last_name" type="text" />  
+     <div class="error_message">
+    @if(CreateUserForm.get('last_name')?.invalid || CreateUserForm.get('last_name')?.touched){
+ 
+      @if(CreateUserForm.get('last_name')?.errors?.['required']){
+      <small>הכנס שם משפחה</small>
+
+      }
+      @else if(CreateUserForm.get('last_name')?.errors?.['minlength']){
+      <small>
+        השם שם משפחה חייבת להכיל לפחות 2 תווים
+      </small>}
+   
+  } </div>
+  </div>
+
+
+  <div>
+ 
+    <label for="birth_date">בחר תאריך</label>
+    <mat-form-field appearance="outline" class="custom-datepicker">
+      <mat-label>תאריך לידה</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="birth_date" readonly>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+     <div class="error_message">
+   
+ 
+      @if(CreateUserForm.get('birth_date')?.hasError('required')){
+        <small >יש להזין תאריך לידה</small>
+
+      }
+      @else if (CreateUserForm.get('birth_date')?.hasError('tooYoung')) {
+              <small >עליך להיות לפחות בן 18</small>
+      }
+
+       
+  
+ 
+      </div>
+   
+   
+  
+  </div>
+
+
+  <div>
+ 
+    <label for="verification">טלפון</label>
+    <input id="phone" formControlName="phone" type="text" />  
+     <div class="error_message">
+    @if(CreateUserForm.get('phone')?.invalid || CreateUserForm.get('phone')?.touched){
+ 
+      @if(CreateUserForm.get('phone')?.errors?.['required']){
+      <small>הכנס טלפון</small>
+
+
+
+
+
+
+
+      }
+      @else if( CreateUserForm.get('phone_customer')?.hasError('pattern')){
+        <p>הכנס מספר טלפון תקני.</p>}
+   
+  } </div>
+  </div>
+
+  <div class="file-upload" (mousedown)="openFileDialog($event)">
+    <label for="resume" class="file-label">📄 העלה קובץ קורות חיים</label>
+    <input #fileInput id="resume" formControlName="resume" type="file" class="file-input" accept=".pdf" (change)="onFileSelected($event)" hidden />
+  
+    @if(selectedFile){
+      <div class="file-name">📎 {{ selectedFile.name }}</div>
+    }
+    @if(CreateUserForm.get('resume')?.invalid || CreateUserForm.get('resume')?.touched){
+      @if(CreateUserForm.get('resume')?.errors?.['required']){
+        <small>⛔ יש להעלות קובץ</small>
+      }
+    }
+  </div>
+  
+  <p class="message_tey"></p>
+  <button type="submit" [disabled]="CreateUserForm.invalid">יצירת חשבון</button>
+</form>}
+
+  
+@else if(step === 2){
+  <h2>נשלחה סיסמא למייל שלך אנא אמת את זהותך</h2>
+  <form  [formGroup]="verificationCode">
+    <div>
+      <label for="Code">קוד האימות</label>
+      <input id="Code" formControlName="Code" type="password" required />
+      <div class="error_message">
+        @if(resetPasswordForm.get('Code')?.hasError('required')){ 
+             <small >הכנס קוד האימות</small>
+        } 
+        @else if (resetPasswordForm.get('Code')?.hasError('minlength')) {
+                  <small>קוד האימות חייב להכיל לפחות 6 תווים</small>
+        }
+
+
+      </div>
+    </div>
+
+      <span  class="forgot-password" (click)="showForgotPasswordForm()">
+    שלח שוב סיסמא
+   </span>
+  
+    <p id="verification_msg" class="message_tey"></p>
+    <button (click)="verifyCode()" [disabled]="verificationCode.invalid">אמת</button>
+  </form>
+}
+@else if(step === 3){
+  <h2>שינוי סיסמא</h2>
+  <form   [formGroup]="resetPasswordForm" (ngSubmit)="onResetPassword()">
+    <div>
+      <label for="password">סיסמה חדשה:</label>
+      <input id="password" formControlName="password" type="password" required />
+      <div class="error_message">
+        @if(resetPasswordForm.get('password')?.hasError('required')){ 
+             <small >הכנס סיסמא</small>
+        } 
+        @else if (resetPasswordForm.get('password')?.hasError('minlength')) {
+                  <small>הסיסמא חייבת להכיל לפחות 6 תווים</small>
+        }
+        @else if (resetPasswordForm.get('password')?.hasError('weakPassword')) {
+          <small>הסיסמא חייבת לכלול אות גדולה, אות קטנה, מספר ותו מיוחד</small>
+}
+
+
+      </div>
+    </div>
+    <div>
+      <label for="verification">אימות סיסמה:</label>
+      <input id="verification" formControlName="verification" type="password" />
+      <div class="error_message">
+        @if(resetPasswordForm.get('verification')?.hasError('required')){  
+               <small >הכנס שוב סיסמא</small>
+        }
+        @else if(resetPasswordForm.hasError('passwordsNotMatching') && resetPasswordForm.get('verification')?.touched) {
+          <small>הסיסמאות אינן תואמות</small>
+        }
+
+ 
+       
+      </div>
+    </div>
+
+  <button type="submit"  [disabled]="resetPasswordForm.invalid">אפס סיסמה</button>
+</form>
+}
+
+
+</div>
+</div>
+</div>
