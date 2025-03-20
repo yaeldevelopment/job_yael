@@ -11,30 +11,30 @@ export class JobsService {
   private api:string="";
   constructor(private http:HttpClient) { 
     this.api=apiURL+'api/';
+    const jobsString = localStorage.getItem('jobs');
+   
   }
   private JobsSubject = new BehaviorSubject<Jobs[]|null>( null); // משתנה שמשתנה לכל משתמש
   Jobs$ = this.JobsSubject.asObservable(); // חשיפת הנתונים כ-Observable
   getJobs() {
     return this. Jobs$;
   }
-  setJobs(Jobs: Jobs[]) {
- 
-    this.JobsSubject.next(Jobs);
-  }
   setJob_Send_Resum(updatedJob: Jobs) {
-    // קבלת הערך הנוכחי מה-BehaviorSubject
     const currentJobs = this.JobsSubject.value;
-  
     if (currentJobs) {
-      // מציאת המיקום של ה-Job לפי id (או מזהה אחר ייחודי)
       const updatedJobs = currentJobs.map(job =>
         job.Id === updatedJob.Id ? updatedJob : job
       );
-  
-      // עדכון ה-BehaviorSubject עם המערך החדש
       this.JobsSubject.next(updatedJobs);
+      // עדכון ה-LocalStorage
+
     }
   }
+
+  setJob(Jobs: Jobs[]) {
+    this.JobsSubject.next(Jobs) ;
+  }
+
   get_all_jobs():Observable<Jobs[]>{
       
     return this.http.get<Jobs[]>(this.api+'Jobs');

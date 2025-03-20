@@ -6,11 +6,10 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class LocalStorageService {
-  isLoggedIn$ = new BehaviorSubject<boolean>(false); // אתחול ריק בהתחלה
+  isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
-      // עדכון המצב רק אחרי שהאובייקט מאותחל
       this.isLoggedIn$.next(this.checkLoginStatus());
     }
   }

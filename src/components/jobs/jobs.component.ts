@@ -6,7 +6,7 @@ import { LoadingComponent } from "../loading/loading.component";
 import { NgxPaginationModule } from 'ngx-pagination';
 import employees from '../../models/employees';
 import { LocalStorageService } from '../../services/local-storage.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-jobs',
   standalone: true,
@@ -16,37 +16,33 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class JobsComponent implements OnInit{
   isLoading:boolean=true;
-  jobs!:Jobs[]|null;
+  jobs!:Jobs[];
   items = Array.from({ length: 50 }, (_, i) => `פריט ${i + 1}`);
   currentPage = 1;
-  jobs$!:Observable<Jobs[]|null>;
+  Jobs$!:Observable<Jobs[]|null>;
   current_employee!:employees;
    ngOnInit(): void {
         const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
         if (savedEmployee) {
           const employeeObject = JSON.parse(savedEmployee);
-      
+          console.log(employeeObject)
          this.current_employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
         }
+        this.servjobs.get_all_jobs().subscribe((data:Jobs[])=>{
+  this.isLoading=false;
+  if(data.length>0){
 
+data.forEach(job => {
+  job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
+
+}); 
+   this.servjobs.setJob(data)
+  }
+  this.Jobs$.subscribe((data)=>{this.jobs!=data})
+})
       }
 constructor(private servjobs:JobsService,private localStorageService:LocalStorageService){
-  this.servjobs.get_all_jobs().subscribe((data:Jobs[])=>{
-    this.isLoading=false;
-    if(data.length>0){
-    
-  data!.forEach(job => {
-    job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
-  
-  });
-    this.servjobs.setJobs(data);
-    }
-  
-  })
-  this.jobs$.subscribe((updatedJobs: Jobs[] | null) => {
-    this.jobs = updatedJobs;
-  });
-  this.jobs$ = this.servjobs.Jobs$;
+
 
 }
 checkIfEmployeeAlreadySent(job: Jobs): boolean {
