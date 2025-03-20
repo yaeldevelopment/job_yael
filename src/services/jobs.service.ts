@@ -24,9 +24,10 @@ export class JobsService {
     if (currentJobs) {
       const updatedJobs = currentJobs.map(job =>
         job.Id === updatedJob.Id 
-          ? { ...updatedJob } // יוצר אובייקט חדש ולא רפרנס לאותו אובייקט
+          ?updatedJob // יוצר אובייקט חדש ולא רפרנס לאותו אובייקט
           : job
       );
+      console.log(updatedJobs)
       this.JobsSubject.next(updatedJobs);
       
       // אפשר לעדכן גם ב-localStorage אם צריך

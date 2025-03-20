@@ -76,14 +76,12 @@ Send_Resume(job: Jobs) {
       this.serv_job.send_resum(job, mail, this.current_employee).subscribe({
         next: (x: any) => {
           // עדכון ה-employees_send
-          const updatedJob: Jobs = {
-            ...job,
-            employees_send: [...job.employees_send, this.current_employee.id]
-          };
-     
-            this.serv_job.setJob_Send_Resum(updatedJob);
-         
           
+          if (!job.employees_send.includes(this.current_employee.id)) {
+            job.employees_send.push(this.current_employee.id);
+            this.serv_job.setJob_Send_Resum(job);
+         
+          }
         },
         error: (err) => {
           console.error('שגיאה', err);
