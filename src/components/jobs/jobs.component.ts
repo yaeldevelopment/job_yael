@@ -27,7 +27,7 @@ export class JobsComponent implements OnInit{
         const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
         if (savedEmployee) {
           const employeeObject = JSON.parse(savedEmployee);
-          console.log(employeeObject)
+ 
          this.current_employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
         }
         this.servjobs.get_all_jobs().subscribe((data:Jobs[])=>{
@@ -38,13 +38,14 @@ data.forEach(job => {
   job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
 
 }); 
+
    this.servjobs.setJob(data)
   }
 
 })
       }
 constructor(private servjobs:JobsService,private localStorageService:LocalStorageService){
-
+this.Jobs$=this.servjobs.getJobs();
 
 }
 checkIfEmployeeAlreadySent(job: Jobs): boolean {
