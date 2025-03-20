@@ -31,11 +31,12 @@ export class JobsComponent implements OnInit{
         this.servjobs.get_all_jobs().subscribe((data:Jobs[])=>{
   this.isLoading=false;
   if(data.length>0){
-    this.servjobs.setJobs(data);
+  
 this.jobs!.forEach(job => {
   job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
 
 });
+  this.servjobs.setJobs(data);
   }
 
 })
