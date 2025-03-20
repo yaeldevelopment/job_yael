@@ -7,10 +7,12 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import employees from '../../models/employees';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { Observable } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+
 @Component({
   selector: 'app-jobs',
   standalone: true,
-  imports: [CardJobComponent, LoadingComponent,NgxPaginationModule],
+  imports: [CardJobComponent, LoadingComponent,NgxPaginationModule,AsyncPipe],
   templateUrl: './jobs.component.html',
   styleUrl: './jobs.component.scss'
 })
@@ -19,7 +21,7 @@ export class JobsComponent implements OnInit{
   jobs!:Jobs[];
   items = Array.from({ length: 50 }, (_, i) => `פריט ${i + 1}`);
   currentPage = 1;
-  Jobs$!:Observable<Jobs[]|null>;
+  Jobs$!:Observable<Jobs[]>;
   current_employee!:employees;
    ngOnInit(): void {
         const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
@@ -38,7 +40,7 @@ data.forEach(job => {
 }); 
    this.servjobs.setJob(data)
   }
-  this.Jobs$.subscribe((data)=>{this.jobs!=data})
+
 })
       }
 constructor(private servjobs:JobsService,private localStorageService:LocalStorageService){

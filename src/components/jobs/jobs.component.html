@@ -1,8 +1,8 @@
 
 <div class="row">
-@if (jobs!=undefined) {
-
-    @for (item of jobs| paginate: { itemsPerPage: 1, currentPage: currentPage }; track $index  ) {
+    @if (Jobs$ | async ;as jobs_list) {
+        @if (jobs_list != null) {
+    @for (item of jobs_list| paginate: { itemsPerPage: 1, currentPage: currentPage }; track $index  ) {
       
         <app-card-job class="col-md-8 col-12"
         [job]="item"></app-card-job>
@@ -14,6 +14,9 @@
     nextLabel="">
   </pagination-controls>
 
-}@else if(isLoading){
+}
+}
+   
+@else if(isLoading){
     <app-loading></app-loading>
 }  </div>

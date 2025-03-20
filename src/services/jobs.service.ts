@@ -14,7 +14,7 @@ export class JobsService {
     const jobsString = localStorage.getItem('jobs');
    
   }
-  private JobsSubject = new BehaviorSubject<Jobs[]|null>( null); // משתנה שמשתנה לכל משתמש
+  private JobsSubject = new BehaviorSubject<Jobs[]>( []); // משתנה שמשתנה לכל משתמש
   Jobs$ = this.JobsSubject.asObservable(); // חשיפת הנתונים כ-Observable
   getJobs() {
     return this. Jobs$;
