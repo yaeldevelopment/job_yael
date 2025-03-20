@@ -22,7 +22,7 @@ resumeUrl: string = '';
 ngOnInit() {
   if (this.employee.resume) {
     this.resumeUrl = this.employee.resume + '?v=' + new Date().getTime();
-    console.log(this.resumeUrl);
+
   }
 }
 

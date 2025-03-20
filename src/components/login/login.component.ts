@@ -106,7 +106,7 @@ verifyCode() {
       return;
     }
     this.employeesServ.get_employee_Id(  this.CreateUserForm.get('email')?.value).subscribe(x=>{
-      console.log(x);
+   
       if(x!=null && x.id!=""){
         alert("המשתמש כבר קיים במערכת");   
           return;
@@ -115,7 +115,7 @@ verifyCode() {
            this.uploadService.uploadPDF(this.selectedFile,  this.CreateUserForm.get('email')?.value).subscribe(
       (x: { message: string; path: string }) => {
         const resum = server.toString() + x.path; // מקבל את הנתיב מהשרת
-        console.log("Uploaded file path:", resum);
+  
   
         let e = new employees(
           "",

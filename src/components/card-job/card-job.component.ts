@@ -28,7 +28,7 @@ progress = 0;
       const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
       if (savedEmployee) {
         const employeeObject = JSON.parse(savedEmployee);
-        console.log(employeeObject)
+
        this.current_employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
       }
     this.authService.isLoggedIn$.subscribe(status => {
@@ -78,7 +78,8 @@ Send_Resume(job: Jobs) {
           // עדכון ה-employees_send
           if (!job.employees_send.includes(this.current_employee.id)) {
             job.employees_send.push(this.current_employee.id);
-          
+            this.serv_job.setJob_Send_Resum(job);
+         
           }
         },
         error: (err) => {

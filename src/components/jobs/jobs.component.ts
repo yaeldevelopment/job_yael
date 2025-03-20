@@ -6,6 +6,7 @@ import { LoadingComponent } from "../loading/loading.component";
 import { NgxPaginationModule } from 'ngx-pagination';
 import employees from '../../models/employees';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-jobs',
   standalone: true,
@@ -24,13 +25,14 @@ export class JobsComponent implements OnInit{
         const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
         if (savedEmployee) {
           const employeeObject = JSON.parse(savedEmployee);
-          console.log(employeeObject)
+      
          this.current_employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
         }
         this.servjobs.get_all_jobs().subscribe((data:Jobs[])=>{
   this.isLoading=false;
   if(data.length>0){
-    this.jobs=data;
+    this.servjobs.setJobs(data);
+    this.jobs=    data;
 this.jobs.forEach(job => {
   job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
 

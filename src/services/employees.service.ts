@@ -27,10 +27,10 @@ export class EmployeesService {
     return this.http.post<employees>(this.api+`employees/getByEmployee_id?mail=${mail}`,null);
    }
   setEmployee(employee: employees) {
-    console.log("Setting employee:", employee);
+    
     this.employeeSubject.next(employee);
     this.authService.login();
-    console.log("Current value in BehaviorSubject:", this.employeeSubject.value);
+    
   }
   
 
