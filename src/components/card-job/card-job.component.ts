@@ -67,6 +67,7 @@ stopLoading() {
 buttonDisabled: boolean = false;
 
 Send_Resume(job: Jobs) {
+
   if (this.isLoggedIn==2) {
     try {
       this.buttonDisabled = true; // נועל את הכפתור מיד
@@ -76,10 +77,10 @@ Send_Resume(job: Jobs) {
       this.serv_job.send_resum(job, mail, this.current_employee).subscribe({
         next: (x: any) => {
           // עדכון ה-employees_send
-          
+       
           if (!job.employees_send.includes(this.current_employee.id)) {
             job.employees_send.push(this.current_employee.id);
-            this.serv_job.setJob_Send_Resum(job);
+            this.serv_job.setJob_Send_Resum(this.current_employee.id,job);
          
           }
         },

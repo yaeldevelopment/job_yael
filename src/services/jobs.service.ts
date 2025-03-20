@@ -19,20 +19,19 @@ export class JobsService {
   getJobs() {
     return this. Jobs$;
   }
-  setJob_Send_Resum(updatedJob: Jobs) {
+  setJob_Send_Resum(id:string,updatedJob: Jobs) {
     const currentJobs = this.JobsSubject.value;
+    console.log(currentJobs)
     if (currentJobs) {
-      const updatedJobs = currentJobs.map(job =>
-        job.Id === updatedJob.Id 
-          ?updatedJob // יוצר אובייקט חדש ולא רפרנס לאותו אובייקט
-          : job
-      );
-      console.log(updatedJobs)
-      this.JobsSubject.next(updatedJobs);
-      
-      // אפשר לעדכן גם ב-localStorage אם צריך
+      for(let item of currentJobs){
+        item.jobSentStatus=!(item.employees_send?.includes(id));;   
+      }
+      this.JobsSubject.next(currentJobs);
     }
   }
+  
+  
+  
 
   setJob(Jobs: Jobs[]) {
     this.JobsSubject.next(Jobs) ;

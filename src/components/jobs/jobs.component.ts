@@ -38,14 +38,15 @@ data.forEach(job => {
   job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
 
 }); 
-
-   this.servjobs.setJob(data)
+console.log(data)
+   this.servjobs.setJob(data);
+   console.log(data)
   }
-
+this.Jobs$=this.servjobs.getJobs();
 })
       }
 constructor(private servjobs:JobsService,private localStorageService:LocalStorageService){
-this.Jobs$=this.servjobs.getJobs();
+
 
 }
 checkIfEmployeeAlreadySent(job: Jobs): boolean {
