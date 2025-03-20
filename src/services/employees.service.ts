@@ -11,9 +11,6 @@ import { AuthService } from './auth-service.service';
 })
 export class EmployeesService {
  private api:string="";
-
-
-
  private employeeSubject = new BehaviorSubject<employees|null>( null); // משתנה שמשתנה לכל משתמש
  employee$ = this.employeeSubject.asObservable(); // חשיפת הנתונים כ-Observable
   constructor(private http:HttpClient,private authService:AuthService) {
