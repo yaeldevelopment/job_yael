@@ -28,23 +28,24 @@ export class JobsComponent implements OnInit{
       
          this.current_employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
         }
-        this.servjobs.get_all_jobs().subscribe((data:Jobs[])=>{
-  this.isLoading=false;
-  if(data.length>0){
-  
-data!.forEach(job => {
-  job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
 
-});
-  this.servjobs.setJobs(data);
-  }
-
-})
-this.jobs$.subscribe((updatedJobs: Jobs[] | null) => {
-  this.jobs = updatedJobs;
-});
       }
 constructor(private servjobs:JobsService,private localStorageService:LocalStorageService){
+  this.servjobs.get_all_jobs().subscribe((data:Jobs[])=>{
+    this.isLoading=false;
+    if(data.length>0){
+    
+  data!.forEach(job => {
+    job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
+  
+  });
+    this.servjobs.setJobs(data);
+    }
+  
+  })
+  this.jobs$.subscribe((updatedJobs: Jobs[] | null) => {
+    this.jobs = updatedJobs;
+  });
   this.jobs$ = this.servjobs.Jobs$;
 
 }
