@@ -32,7 +32,7 @@ export class JobsComponent implements OnInit{
   this.isLoading=false;
   if(data.length>0){
   
-this.jobs!.forEach(job => {
+data!.forEach(job => {
   job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
 
 });
