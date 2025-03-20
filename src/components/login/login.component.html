@@ -67,7 +67,7 @@
     <button type="submit" [disabled]="loginForm.invalid">התחברות</button>
   </form>}  @else if(step===1){
 
-    <h2>משתמש חדש</h2>
+    <h2>טופס יצירת משתמש </h2>
     <form  [formGroup]="CreateUserForm" class="" (ngSubmit)="CreateUser()">
   <div>
     <label for="email">מייל</label>

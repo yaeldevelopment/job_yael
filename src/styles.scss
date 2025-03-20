@@ -12,7 +12,7 @@ h1,h2,h3,h4{
 }
 .container{
     .row{
-      justify-content: center;  margin: 80px auto; 
+      justify-content: center;  margin: 40px auto; 
     }
    
 
@@ -64,11 +64,26 @@ cursor: pointer;
         text-align: right;
         font-family: 'Arial', sans-serif;
       }
+      
+     
       .ngx-pagination{
+
         margin: 3% auto;
         display: flex;
         justify-content: center;
+       a:hover{
+        border-radius: 8px;
+       }
          .current{
+          border-radius: 8px;
         background-color: $back_color !important;
         }}
-      
+        .limit-row{
+                display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+        }
+     
+        

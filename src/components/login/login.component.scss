@@ -1,4 +1,10 @@
 @import "../../varibles.scss";
+@media(min-width:767px){
+  .card {
+    max-width: 40%;
+  }
+
+}
 label {
   cursor: pointer;
   padding: 0px;
@@ -26,7 +32,6 @@ label.selected {
 .card {
     display: flex;
     flex-direction: column;
-    max-width: 40%;
     box-shadow: 0px 1px 4px 1px;
     padding: 30px;
     border-radius: 12px;

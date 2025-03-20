@@ -7,8 +7,8 @@ export default {
   routes: undefined,
   entryPointToBrowserMapping: {},
   assets: {
-    'index.csr.html': {size: 5310, hash: 'e331bdaf4d06e7a1c653d3272465555ca51567a440f2b3ab4eae7bbdcc32027c', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 1003, hash: '1194307a2b477f5bc7a7fe8e960b573397b47ff0ba5b7bdb2caa5a44ea11d0f2', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'styles-W4HMEMUE.css': {size: 227945, hash: 'y7top+NaJxI', text: () => import('./assets-chunks/styles-W4HMEMUE_css.mjs').then(m => m.default)}
+    'index.csr.html': {size: 5317, hash: '2d9f184ba0f91e3d83ae1bbf13d02e0cd1f5fb8625a9c324cea0131c47d308c7', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 1010, hash: 'f14d5bf9fd334e70a92887a9f17b6df91cbfbb63b4c5e7976c3c4cf5229238b1', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'styles-UVLAIPNA.css': {size: 228103, hash: '/nOT3KqItKw', text: () => import('./assets-chunks/styles-UVLAIPNA_css.mjs').then(m => m.default)}
   },
 };

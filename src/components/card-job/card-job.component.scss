@@ -1,19 +1,42 @@
 @import "../../varibles.scss";
-.job-card {
+@media(min-width:767px){
+  .job-card {
+    padding: 50px 50px 95px 50px;}
 
+}
+@media(max-width:767px){
+  .job-card {
+    padding: 25px 25px 95px 25px;}
+
+}
+.job-card {
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding: 70px;
+ 
     position: relative;
     background: #fff;
     margin-bottom: 20px;
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+  }
+  .salary{
+    min-height: 27px;
+  }
+  .description_job{
+    -webkit-line-clamp: 2; // מספר השורות
+    min-height: 54px; 
   }
   
   .job-header h2 {
     font-size: 22px;
     color: #ff007f;
     margin-bottom: 5px;
+  }
+  .job-description{
+    min-height: 90px;
+    .limit-row{
+          -webkit-line-clamp: 3; // מספר השורות
+    }
+
   }
   
   .job-header h3 {
@@ -23,13 +46,13 @@
   }
   
   .job-header .date {
-    font-size: 14px;
+    font-size: 18px;
     color: gray;
   }
   
   .job-details p {
     margin: 5px 0;
-    font-size: 16px;
+    font-size: 18px;
   }
   
   .job-footer {
@@ -37,6 +60,7 @@
     font-weight: bold;
   }
   .job-button-send{
+    margin-top: 15px;
     position: absolute;
     left: 5%;
     padding: 8px;

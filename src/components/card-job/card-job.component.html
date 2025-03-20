@@ -8,18 +8,20 @@
     <div class="job-details">
       <p><strong>מיקום:</strong> {{ job.job_location.join(', ') }}</p>
       <p><strong>סוג משרה:</strong> {{ job.job_type }}</p>
-      @if(job.salary){
-      <p ><strong>שכר:</strong> {{ job.salary }}</p>
-      }
+      <p class="salary"> @if(job.salary){
+    <strong>שכר:</strong> {{ job.salary }}
+      }</p>
 
 
-        @if(job.additional_conditions){
-      <p>
-        <strong>תנאים נוספים:</strong> {{ job.additional_conditions }}
-      </p>}
+       
+      <p class=" limit-row description_job"> @if(job.additional_conditions){
+        <strong>תיאור התפקיד:</strong> {{ job.additional_conditions }}}
+      </p>
     </div>
   
-    <div class="job-description" [innerHTML]="job.html_word"></div>
+    <div class="job-description limit-row" >
+      <strong>דרישות:</strong> 
+      <p class=" limit-row" [innerHTML]="job.html_word"> </p></div>
   @if(isLoading){
     <div class="progress-container" >
       <div class="progress-bar" [style.width.%]="progress"></div>
