@@ -23,11 +23,13 @@ export class JobsService {
     const currentJobs = this.JobsSubject.value;
     if (currentJobs) {
       const updatedJobs = currentJobs.map(job =>
-        job.Id === updatedJob.Id ? updatedJob : job
+        job.Id === updatedJob.Id 
+          ? { ...updatedJob } // יוצר אובייקט חדש ולא רפרנס לאותו אובייקט
+          : job
       );
       this.JobsSubject.next(updatedJobs);
-      // עדכון ה-LocalStorage
-
+      
+      // אפשר לעדכן גם ב-localStorage אם צריך
     }
   }
 
