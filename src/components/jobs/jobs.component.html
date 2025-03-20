@@ -2,10 +2,6 @@
 <div class="row">
 @if (jobs!=undefined) {
 
-
-    
-
-
     @for (item of jobs| paginate: { itemsPerPage: 1, currentPage: currentPage }; track $index  ) {
       
         <app-card-job class="col-md-8 col-12"

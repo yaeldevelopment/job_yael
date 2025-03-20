@@ -7,8 +7,8 @@ export default {
   routes: undefined,
   entryPointToBrowserMapping: {},
   assets: {
-    'index.csr.html': {size: 5317, hash: 'eaf45f29bbab57a638b5064de7c44558b60616489de31fa17b12bdd33d5ae7e4', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 1010, hash: '99f50db2c0aec9d17b1845cdbe2245b0dc57c3703b2b36044050b6b0e6c6300c', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'index.csr.html': {size: 5317, hash: '376a0ae72d3682dd4e7a608a80572ff2af08861ecca15ec9bb0c785da945daf1', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 1010, hash: '8baa3a0caada078e9839aae98401da9f9828e8e2033d5e21d896e9eb0583d546', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
     'styles-UVLAIPNA.css': {size: 228103, hash: '/nOT3KqItKw', text: () => import('./assets-chunks/styles-UVLAIPNA_css.mjs').then(m => m.default)}
   },
 };
