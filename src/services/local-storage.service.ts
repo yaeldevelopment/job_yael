@@ -14,18 +14,21 @@ export class LocalStorageService {
     }
   }
 
-  setItemWithExpiry(key: string, value: any, ttl: number) {
+  setItemWithExpiry(key: string, value: any, ttlOrExpiry: number, isAbsoluteExpiry: boolean = false) {
     if (!isPlatformBrowser(this.platformId)) return;
-
+  
     const now = new Date();
+    const expiry = isAbsoluteExpiry ? ttlOrExpiry : now.getTime() + ttlOrExpiry;
+  
     const item = {
       value: value,
-      expiry: now.getTime() + ttl
+      expiry: expiry
     };
-
+  
     localStorage.setItem(key, JSON.stringify(item));
     this.isLoggedIn$.next(true);
   }
+  
 
   getItemWithExpiry(key: string) {
     if (!isPlatformBrowser(this.platformId)) return null;

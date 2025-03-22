@@ -38,9 +38,9 @@ data.forEach(job => {
   job.jobSentStatus=this.checkIfEmployeeAlreadySent(job);
 
 }); 
-console.log(data)
+
    this.servjobs.setJob(data);
-   console.log(data)
+ 
   }
 this.Jobs$=this.servjobs.getJobs();
 })

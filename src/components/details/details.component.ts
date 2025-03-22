@@ -91,12 +91,15 @@ this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe({
     // קבלת האובייקט הקודם מה-localStorage
     const employeeData = this.localStorageService.getItemWithExpiry("Employee");
 
-    if (employeeData && employeeData.expiry) {
-      const expiryTime = employeeData.expiry;
-     
-      // שמירה מחדש עם אותו זמן תפוגה
-      this.localStorageService.setItemWithExpiry("Employee", this.employee, expiryTime);
+    if (employeeData) {
+      const expiryTime = JSON.parse(localStorage.getItem("Employee")!).expiry;
+    
+      const updatedEmployee = { ...employeeData, resume: response.path };
+    
+      // שמירה מחדש עם expiry הקודם:
+      this.localStorageService.setItemWithExpiry("Employee", updatedEmployee, expiryTime, true);
     }
+    
 
     this.selectedFile = null;
   },

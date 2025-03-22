@@ -21,7 +21,7 @@ export class JobsService {
   }
   setJob_Send_Resum(id:string,updatedJob: Jobs) {
     const currentJobs = this.JobsSubject.value;
-    console.log(currentJobs)
+    
     if (currentJobs) {
       for(let item of currentJobs){
         item.jobSentStatus=!(item.employees_send?.includes(id));;   
