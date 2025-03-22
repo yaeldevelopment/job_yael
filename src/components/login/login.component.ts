@@ -75,10 +75,10 @@ verifyCode() {
   verificationCode!:FormGroup;
   onResetPassword() {
 
-     this.employeesServ.reset_password( this.localStorageService.getItemWithExpiry("mail")!,this.resetPasswordForm.get("verification")?.value).subscribe({
+     this.employeesServ.reset_password( this.localStorageService.getItemWithExpiry("mail")?.value!,this.resetPasswordForm.get("verification")?.value).subscribe({
       next: response => {
         
-        this.localStorageService.setItemWithExpiry("Employee", JSON.stringify(response.user || ""),86400000);
+        this.localStorageService.setItemWithExpiry("Employee", response.user || "",86400000);
         this.notificationService.showPopup('success', 'הצלחה!', 'הפעולה בוצעה בהצלחה.',this.onClose );
 
       },
@@ -130,7 +130,7 @@ verifyCode() {
   
         this.employeesServ.post_employee(e).subscribe(
           (e:employees) => {
-            this.localStorageService.setItemWithExpiry("Employee", JSON.stringify(e || ""),86400000);
+            this.localStorageService.setItemWithExpiry("Employee",e || "",86400000);
 
             this.router.navigate(['/']).then(() => {
               window.location.reload();
@@ -211,7 +211,7 @@ forgotPasswordVisible = false; // משתנה ב-Component לניהול ההופ�
     .subscribe(() => {
       if (this.employeesServ.getEmployee() != null) {
         $(".message_tey")?.text("");
-        this.localStorageService.setItemWithExpiry("Employee", JSON.stringify(this.employeesServ.getEmployee() || ""),86400000);
+        this.localStorageService.setItemWithExpiry("Employee", this.employeesServ.getEmployee() || "",86400000);
         this.router.navigate(['/']).then(() => {
           window.location.reload();
         });
@@ -229,7 +229,7 @@ forgotPasswordVisible = false; // משתנה ב-Component לניהול ההופ�
     // הצגת טופס איפוס סיסמה
     let pass=this.generateSecureRandomPassword()
     this.localStorageService.setItemWithExpiry("pass",pass,86400000);
-    this.employeesServ.send_password(this.localStorageService.getItemWithExpiry("mail")!,pass)
+    this.employeesServ.send_password(this.localStorageService.getItemWithExpiry("mail")?.value!,pass)
     .subscribe({
       next: response => {
         this.count=0;

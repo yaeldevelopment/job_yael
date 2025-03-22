@@ -26,7 +26,7 @@
        
       
         <h3>📤 העלאת קובץ חדש</h3>
-        <input type="file" (change)="onFileSelected($event)" accept=".pdf">
+        <input [attr.key]="fileInputKey" type="file"  #fileInput (change)="onFileSelected($event)" accept=".pdf">
         <button 
         [disabled]="!selectedFile || isUploading" 
         class="change_file" 

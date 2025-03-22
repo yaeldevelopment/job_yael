@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import employees from '../../models/employees';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UploadService } from '../../services/upload-service.service';
@@ -13,13 +13,15 @@ import { LocalStorageService } from '../../services/local-storage.service';
   styleUrl: './details.component.scss'
 })
 export class DetailsComponent {
+  @ViewChild('fileInput') fileInput!: ElementRef;
 employee!:employees;
 safeResumeUrl: SafeResourceUrl = '';
 selectedFile: File | null = null; // קובץ שהמשתמש בחר
 uploadedFileUrl: SafeResourceUrl | null = null; // נתיב הקובץ שיוצג למשתמש
 existingFileHash: string | null = null; // ה-Hash של הקובץ הקיים
 resumeUrl: string = '';
-current_employee!:employees; 
+current_employee!:employees;
+ fileInputKey = 0;
 isUploading: boolean = false;
 ngOnInit() {
   if (this.employee.resume) {
@@ -30,9 +32,11 @@ ngOnInit() {
 
 constructor( public sanitizer: DomSanitizer,private uploadService:UploadService,private http: HttpClient,private localStorageService:LocalStorageService){
   const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
+
   if (savedEmployee) {
-    const employeeObject = JSON.parse(savedEmployee);
-   this.employee=new employees(employeeObject._id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
+    let employeeObject= savedEmployee.value;
+   
+   this.employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
 
 }}
 
@@ -83,7 +87,8 @@ if (!allowedTypes.includes(this.selectedFile.type)) {
 this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe({
   next: (response: { message: string; path: string }) => {
     // מוסיפים query param רנדומלי כדי לעקוף cache
-    this.resumeUrl = response.path + '?v=' + new Date().getTime();
+    if(response){
+         this.resumeUrl = response.path + '?v=' + new Date().getTime();
 
     // עדכון הנתיב לקובץ ב-employee
     this.employee.resume = response.path;
@@ -94,14 +99,16 @@ this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe({
     if (employeeData) {
       const expiryTime = JSON.parse(localStorage.getItem("Employee")!).expiry;
     
-      const updatedEmployee = { ...employeeData, resume: response.path };
-    
+
       // שמירה מחדש עם expiry הקודם:
-      this.localStorageService.setItemWithExpiry("Employee", updatedEmployee, expiryTime, true);
+      this.localStorageService.setItemWithExpiry("Employee", this.employee, expiryTime, true);
     }
     
-
+    this.fileInputKey++; // מאפס את ה-input על ידי שינוי ה-key
     this.selectedFile = null;
+    this.fileInput.nativeElement.value = '';
+    }
+ 
   },
 
   error: (error) => {

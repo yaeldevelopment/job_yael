@@ -27,7 +27,7 @@ progress = 0;
   ngOnInit(): void {
       const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
       if (savedEmployee) {
-        const employeeObject = JSON.parse(savedEmployee);
+        let employeeObject= savedEmployee.value;
 
        this.current_employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
       }

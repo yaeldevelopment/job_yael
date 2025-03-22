@@ -29,26 +29,28 @@ export class LocalStorageService {
     this.isLoggedIn$.next(true);
   }
   
-
   getItemWithExpiry(key: string) {
     if (!isPlatformBrowser(this.platformId)) return null;
-
+  
     const itemStr = localStorage.getItem(key);
     if (!itemStr) {
       this.isLoggedIn$.next(false);
       return null;
     }
-
+  
     const item = JSON.parse(itemStr);
     const now = new Date();
-
+  
     if (now.getTime() > item.expiry) {
       localStorage.removeItem(key);
       this.isLoggedIn$.next(false);
       return null;
     }
-
-    return item.value;
+  
+    return {
+      value: item.value, // כבר אובייקט
+      expiry: item.expiry
+    };
   }
 
   removeItem(key: string) {
