@@ -1,3 +1,3 @@
- let api:string="https://localhost:7054/";
- //"https://job-server-lfnp.onrender.com/";
+ let api:string="https://job-server-lfnp.onrender.com/";
+ //"https://localhost:7054/";
   export default api;
