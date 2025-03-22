@@ -114,7 +114,7 @@ verifyCode() {
       else{
            this.uploadService.uploadPDF(this.selectedFile,  this.CreateUserForm.get('email')?.value).subscribe(
       (x: { message: string; path: string }) => {
-        const resum = server.toString() + x.path; // מקבל את הנתיב מהשרת
+        const resum =  x.path; // מקבל את הנתיב מהשרת
   
   
         let e = new employees(

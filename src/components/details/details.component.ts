@@ -79,10 +79,10 @@ if (!allowedTypes.includes(this.selectedFile.type)) {
   
 this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe(
   (response: { message: string; path: string }) => {
-    const baseUrl = server + response.path;
+
     // מוסיפים query param רנדומלי כדי לעקוף cache
-    this.resumeUrl = baseUrl + '?v=' + new Date().getTime(); 
-    this.employee.resume = baseUrl; // לשמור גם את הבסיס
+    this.resumeUrl =  response.path + '?v=' + new Date().getTime(); 
+    this.employee.resume =  response.path; // לשמור גם את הבסיס
     this.selectedFile = null;
   },
   (error) => console.error("Error uploading file:", error)
