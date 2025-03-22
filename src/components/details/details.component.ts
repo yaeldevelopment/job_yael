@@ -19,7 +19,8 @@ selectedFile: File | null = null; // קובץ שהמשתמש בחר
 uploadedFileUrl: SafeResourceUrl | null = null; // נתיב הקובץ שיוצג למשתמש
 existingFileHash: string | null = null; // ה-Hash של הקובץ הקיים
 resumeUrl: string = '';
-show_btn:boolean=true;
+current_employee!:employees; 
+isUploading: boolean = false;
 ngOnInit() {
   if (this.employee.resume) {
     this.resumeUrl = this.employee.resume + '?v=' + new Date().getTime();
@@ -57,11 +58,11 @@ async calculateHash(file: Blob): Promise<string> {
   return Array.from(new Uint8Array(hashBuffer)).map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
 // העלאת קובץ חדש
-
-
-
-    
+   
   uploadFile() {
+    if (!this.selectedFile) return;
+
+    this.isUploading = true; // נועל את הכפתור
     if (!this.selectedFile || !this.employee.mail) {
       alert('❌ יש להזין אימייל ולבחור קובץ להעלאה.');
       return;
@@ -77,19 +78,38 @@ if (!allowedTypes.includes(this.selectedFile.type)) {
   alert('❌ יש להעלות קובץ מהסיומות הבאות: .pdf');
   return;
 }
-    this.show_btn=false;
-  
-this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe(
-  (response: { message: string; path: string }) => {
 
+
+this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe({
+  next: (response: { message: string; path: string }) => {
     // מוסיפים query param רנדומלי כדי לעקוף cache
-    this.resumeUrl =  response.path + '?v=' + new Date().getTime(); 
-    this.employee.resume =  response.path; // לשמור גם את הבסיס
+    this.resumeUrl = response.path + '?v=' + new Date().getTime();
+
+    // עדכון הנתיב לקובץ ב-employee
+    this.employee.resume = response.path;
+
+    // קבלת האובייקט הקודם מה-localStorage
+    const employeeData = this.localStorageService.getItemWithExpiry("Employee");
+
+    if (employeeData && employeeData.expiry) {
+      const expiryTime = employeeData.expiry;
+
+      // שמירה מחדש עם אותו זמן תפוגה
+      this.localStorageService.setItemWithExpiry("Employee", this.employee, expiryTime);
+    }
+
     this.selectedFile = null;
-    this.show_btn=true;
   },
-  (error) => console.error("Error uploading file:", error)
-);
+
+  error: (error) => {
+    console.error("Error uploading file:", error);
+  },
+
+  complete: () => {
+    // שחרור הכפתור לאחר סיום (בהצלחה או כישלון)
+    this.isUploading = false;
+  }
+});
 }
 
 

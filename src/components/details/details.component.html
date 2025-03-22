@@ -27,7 +27,12 @@
       
         <h3>📤 העלאת קובץ חדש</h3>
         <input type="file" (change)="onFileSelected($event)" accept=".pdf">
-        <button [disabled]="!selectedFile&& show_btn" (click)="uploadFile()">🔄 החלפת קובץ</button>
+        <button 
+        [disabled]="!selectedFile || isUploading" 
+        class="change_file" 
+        (click)="uploadFile()">
+        🔄 החלפת קובץ
+      </button>
       </div>
   
 
