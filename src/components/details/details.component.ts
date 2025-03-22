@@ -19,6 +19,7 @@ selectedFile: File | null = null; // קובץ שהמשתמש בחר
 uploadedFileUrl: SafeResourceUrl | null = null; // נתיב הקובץ שיוצג למשתמש
 existingFileHash: string | null = null; // ה-Hash של הקובץ הקיים
 resumeUrl: string = '';
+show_btn:boolean=true;
 ngOnInit() {
   if (this.employee.resume) {
     this.resumeUrl = this.employee.resume + '?v=' + new Date().getTime();
@@ -76,6 +77,7 @@ if (!allowedTypes.includes(this.selectedFile.type)) {
   alert('❌ יש להעלות קובץ מהסיומות הבאות: .pdf');
   return;
 }
+    this.show_btn=false;
   
 this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe(
   (response: { message: string; path: string }) => {
@@ -84,6 +86,7 @@ this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe(
     this.resumeUrl =  response.path + '?v=' + new Date().getTime(); 
     this.employee.resume =  response.path; // לשמור גם את הבסיס
     this.selectedFile = null;
+    this.show_btn=true;
   },
   (error) => console.error("Error uploading file:", error)
 );
