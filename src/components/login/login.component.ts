@@ -52,7 +52,7 @@ export class LoginComponent {
             window.location.reload();
           });}
 verifyCode() {
- if (this.verificationCode.get("Code")?.value==  this.localStorageService.getItemWithExpiry("pass"))
+ if (this.verificationCode.get("Code")?.value== this.Encryption_Service.decryptData( this.localStorageService.getItemWithExpiry("pass")?.value))
  {
   this.step=3;
  }
@@ -79,7 +79,7 @@ verifyCode() {
       next: response => {
         
         this.localStorageService.setItemWithExpiry("Employee", response.user || "",86400000);
-        this.notificationService.showPopup('success', 'הצלחה!', 'הפעולה בוצעה בהצלחה.',this.onClose );
+        this.notificationService.showPopup('success', 'הצלחת', 'הסיסמא שונתה בהצלחה',this.onClose );
 
       },
       error: error => {
@@ -227,13 +227,15 @@ forgotPasswordVisible = false; // משתנה ב-Component לניהול ההופ�
   
   showForgotPasswordForm() {
     // הצגת טופס איפוס סיסמה
-    let pass=this.generateSecureRandomPassword()
-    this.localStorageService.setItemWithExpiry("pass",pass,86400000);
-    this.employeesServ.send_password(this.localStorageService.getItemWithExpiry("mail")?.value!,pass)
+    let pass=this.generateSecureRandomPassword()  
+    let pass_encr= this.Encryption_Service.encryptData(pass);
+    this.localStorageService.setItemWithExpiry("pass",pass_encr,86400000);
+ 
+    this.employeesServ.send_password(this.localStorageService.getItemWithExpiry("mail")?.value!,pass_encr)
     .subscribe({
       next: response => {
         this.count=0;
-        this.notificationService.showPopup("success","הסיסמא נשלחה למייל בהצלחה","אנא הכנס למייל ותבדוק מהו קוד האימות");
+        this.notificationService.showPopup("success","קוד האימות נשלח בהצלחה","אנא הכנס למייל ותבדוק מהו קוד האימות");
     
       },
       error: error => {
