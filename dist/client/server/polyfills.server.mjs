@@ -23,9 +23,7 @@ function initZone() {
   }
   mark("Zone");
   class ZoneImpl {
-    static {
-      this.__symbol__ = __symbol__;
-    }
+    static __symbol__ = __symbol__;
     static assertZonePatched() {
       if (global["Promise"] !== patches["ZoneAwarePromise"]) {
         throw new Error("Zone.js has detected that ZoneAwarePromise `(window|global).Promise` has been overwritten.\nMost likely cause is that a Promise polyfill has been loaded after Zone.js (Polyfilling Promise api is not necessary when zone.js is loaded. If you must load one, do so before loading zone.js.)");
@@ -44,7 +42,6 @@ function initZone() {
     static get currentTask() {
       return _currentTask;
     }
-    // tslint:disable-next-line:require-internal-with-underscore
     static __load_patch(name, fn, ignoreDuplicate = false) {
       if (patches.hasOwnProperty(name)) {
         const checkDuplicate = global[__symbol__("forceDuplicateZoneCheck")] === true;
@@ -64,6 +61,10 @@ function initZone() {
     get name() {
       return this._name;
     }
+    _parent;
+    _name;
+    _properties;
+    _zoneDelegate;
     constructor(parent, zoneSpec) {
       this._parent = parent;
       this._name = zoneSpec ? zoneSpec.name || "unnamed" : "<root>";
@@ -243,12 +244,39 @@ function initZone() {
     get zone() {
       return this._zone;
     }
+    _zone;
+    _taskCounts = {
+      "microTask": 0,
+      "macroTask": 0,
+      "eventTask": 0
+    };
+    _parentDelegate;
+    _forkDlgt;
+    _forkZS;
+    _forkCurrZone;
+    _interceptDlgt;
+    _interceptZS;
+    _interceptCurrZone;
+    _invokeDlgt;
+    _invokeZS;
+    _invokeCurrZone;
+    _handleErrorDlgt;
+    _handleErrorZS;
+    _handleErrorCurrZone;
+    _scheduleTaskDlgt;
+    _scheduleTaskZS;
+    _scheduleTaskCurrZone;
+    _invokeTaskDlgt;
+    _invokeTaskZS;
+    _invokeTaskCurrZone;
+    _cancelTaskDlgt;
+    _cancelTaskZS;
+    _cancelTaskCurrZone;
+    _hasTaskDlgt;
+    _hasTaskDlgtOwner;
+    _hasTaskZS;
+    _hasTaskCurrZone;
     constructor(zone, parentDelegate, zoneSpec) {
-      this._taskCounts = {
-        "microTask": 0,
-        "macroTask": 0,
-        "eventTask": 0
-      };
       this._zone = zone;
       this._parentDelegate = parentDelegate;
       this._forkZS = zoneSpec && (zoneSpec && zoneSpec.onFork ? zoneSpec : parentDelegate._forkZS);
@@ -354,7 +382,6 @@ function initZone() {
         this.handleError(targetZone, err);
       }
     }
-    // tslint:disable-next-line:require-internal-with-underscore
     _updateTaskCount(type, count) {
       const counts = this._taskCounts;
       const prev = counts[type];
@@ -374,11 +401,18 @@ function initZone() {
     }
   }
   class ZoneTask {
+    type;
+    source;
+    invoke;
+    callback;
+    data;
+    scheduleFn;
+    cancelFn;
+    _zone = null;
+    runCount = 0;
+    _zoneDelegates = null;
+    _state = "notScheduled";
     constructor(type, source, callback, options, scheduleFn, cancelFn) {
-      this._zone = null;
-      this.runCount = 0;
-      this._zoneDelegates = null;
-      this._state = "notScheduled";
       this.type = type;
       this.source = source;
       this.data = options;
@@ -421,7 +455,6 @@ function initZone() {
     cancelScheduleRequest() {
       this._transitionTo(notScheduled, scheduling);
     }
-    // tslint:disable-next-line:require-internal-with-underscore
     _transitionTo(toState, fromState1, fromState2) {
       if (this._state === fromState1 || this._state === fromState2) {
         this._state = toState;
@@ -659,7 +692,7 @@ function patchProperty(obj, prop, prototype) {
     if (typeof previousValue === "function") {
       target.removeEventListener(eventName, wrapFn);
     }
-    originalDescSet && originalDescSet.call(target, null);
+    originalDescSet?.call(target, null);
     target[eventNameSymbol] = newValue;
     if (typeof newValue === "function") {
       target.addEventListener(eventName, wrapFn, false);
@@ -861,7 +894,7 @@ function patchPromise(Zone2) {
       }
     }
     function isThenable(value) {
-      return value && value.then;
+      return value && typeof value.then === "function";
     }
     function forwardResolution(value) {
       return value;
@@ -1302,20 +1335,6 @@ function loadZone() {
   global2["Zone"] ??= initZone();
   return global2["Zone"];
 }
-var passiveSupported = false;
-if (typeof window !== "undefined") {
-  try {
-    const options = Object.defineProperty({}, "passive", {
-      get: function() {
-        passiveSupported = true;
-      }
-    });
-    window.addEventListener("test", options, options);
-    window.removeEventListener("test", options, options);
-  } catch (err) {
-    passiveSupported = false;
-  }
-}
 var OPTIMIZED_ZONE_EVENT_TASK_DATA = {
   useG: true
 };
@@ -1444,10 +1463,7 @@ function patchEventTarget(_global2, api, apis, patchOptions) {
       nativePrependEventListener = proto[zoneSymbol(patchOptions2.prepend)] = proto[patchOptions2.prepend];
     }
     function buildEventListenerOptions(options, passive) {
-      if (!passiveSupported && typeof options === "object" && options) {
-        return !!options.capture;
-      }
-      if (!passiveSupported || !passive) {
+      if (!passive) {
         return options;
       }
       if (typeof options === "boolean") {
@@ -1514,7 +1530,7 @@ function patchEventTarget(_global2, api, apis, patchOptions) {
       const typeOfDelegate = typeof delegate;
       return typeOfDelegate === "function" && task.callback === delegate || typeOfDelegate === "object" && task.originalDelegate === delegate;
     };
-    const compare = patchOptions2 && patchOptions2.diff ? patchOptions2.diff : compareTaskCallbackVsDelegate;
+    const compare = patchOptions2?.diff || compareTaskCallbackVsDelegate;
     const unpatchedEvents = Zone[zoneSymbol("UNPATCHED_EVENTS")];
     const passiveEvents = _global2[zoneSymbol("PASSIVE_EVENTS")];
     function copyEventListenerOptions(options) {
@@ -1541,17 +1557,17 @@ function patchEventTarget(_global2, api, apis, patchOptions) {
         if (isNode && eventName === "uncaughtException") {
           return nativeListener.apply(this, arguments);
         }
-        let isHandleEvent = false;
+        let isEventListenerObject = false;
         if (typeof delegate !== "function") {
           if (!delegate.handleEvent) {
             return nativeListener.apply(this, arguments);
           }
-          isHandleEvent = true;
+          isEventListenerObject = true;
         }
         if (validateHandler && !validateHandler(nativeListener, delegate, target, arguments)) {
           return;
         }
-        const passive = passiveSupported && !!passiveEvents && passiveEvents.indexOf(eventName) !== -1;
+        const passive = !!passiveEvents && passiveEvents.indexOf(eventName) !== -1;
         const options = copyEventListenerOptions(buildEventListenerOptions(arguments[2], passive));
         const signal = options?.signal;
         if (signal?.aborted) {
@@ -1629,13 +1645,13 @@ function patchEventTarget(_global2, api, apis, patchOptions) {
         if (once) {
           taskData.options.once = true;
         }
-        if (!(!passiveSupported && typeof task.options === "boolean")) {
+        if (typeof task.options !== "boolean") {
           task.options = options;
         }
         task.target = target;
         task.capture = capture;
         task.eventName = eventName;
-        if (isHandleEvent) {
+        if (isEventListenerObject) {
           task.originalDelegate = delegate;
         }
         if (!prepend) {
@@ -2302,130 +2318,6 @@ var require_MouseEvent = __commonJS({
     });
   }
 });
-var require_DOMException = __commonJS({
-  "external/npm/node_modules/domino/lib/DOMException.js"(exports, module) {
-    module.exports = DOMException;
-    var INDEX_SIZE_ERR = 1;
-    var HIERARCHY_REQUEST_ERR = 3;
-    var WRONG_DOCUMENT_ERR = 4;
-    var INVALID_CHARACTER_ERR = 5;
-    var NO_MODIFICATION_ALLOWED_ERR = 7;
-    var NOT_FOUND_ERR = 8;
-    var NOT_SUPPORTED_ERR = 9;
-    var INVALID_STATE_ERR = 11;
-    var SYNTAX_ERR = 12;
-    var INVALID_MODIFICATION_ERR = 13;
-    var NAMESPACE_ERR = 14;
-    var INVALID_ACCESS_ERR = 15;
-    var TYPE_MISMATCH_ERR = 17;
-    var SECURITY_ERR = 18;
-    var NETWORK_ERR = 19;
-    var ABORT_ERR = 20;
-    var URL_MISMATCH_ERR = 21;
-    var QUOTA_EXCEEDED_ERR = 22;
-    var TIMEOUT_ERR = 23;
-    var INVALID_NODE_TYPE_ERR = 24;
-    var DATA_CLONE_ERR = 25;
-    var names = [
-      null,
-      "INDEX_SIZE_ERR",
-      null,
-      "HIERARCHY_REQUEST_ERR",
-      "WRONG_DOCUMENT_ERR",
-      "INVALID_CHARACTER_ERR",
-      null,
-      "NO_MODIFICATION_ALLOWED_ERR",
-      "NOT_FOUND_ERR",
-      "NOT_SUPPORTED_ERR",
-      "INUSE_ATTRIBUTE_ERR",
-      "INVALID_STATE_ERR",
-      "SYNTAX_ERR",
-      "INVALID_MODIFICATION_ERR",
-      "NAMESPACE_ERR",
-      "INVALID_ACCESS_ERR",
-      null,
-      "TYPE_MISMATCH_ERR",
-      "SECURITY_ERR",
-      "NETWORK_ERR",
-      "ABORT_ERR",
-      "URL_MISMATCH_ERR",
-      "QUOTA_EXCEEDED_ERR",
-      "TIMEOUT_ERR",
-      "INVALID_NODE_TYPE_ERR",
-      "DATA_CLONE_ERR"
-    ];
-    var messages = [
-      null,
-      "INDEX_SIZE_ERR (1): the index is not in the allowed range",
-      null,
-      "HIERARCHY_REQUEST_ERR (3): the operation would yield an incorrect nodes model",
-      "WRONG_DOCUMENT_ERR (4): the object is in the wrong Document, a call to importNode is required",
-      "INVALID_CHARACTER_ERR (5): the string contains invalid characters",
-      null,
-      "NO_MODIFICATION_ALLOWED_ERR (7): the object can not be modified",
-      "NOT_FOUND_ERR (8): the object can not be found here",
-      "NOT_SUPPORTED_ERR (9): this operation is not supported",
-      "INUSE_ATTRIBUTE_ERR (10): setAttributeNode called on owned Attribute",
-      "INVALID_STATE_ERR (11): the object is in an invalid state",
-      "SYNTAX_ERR (12): the string did not match the expected pattern",
-      "INVALID_MODIFICATION_ERR (13): the object can not be modified in this way",
-      "NAMESPACE_ERR (14): the operation is not allowed by Namespaces in XML",
-      "INVALID_ACCESS_ERR (15): the object does not support the operation or argument",
-      null,
-      "TYPE_MISMATCH_ERR (17): the type of the object does not match the expected type",
-      "SECURITY_ERR (18): the operation is insecure",
-      "NETWORK_ERR (19): a network error occurred",
-      "ABORT_ERR (20): the user aborted an operation",
-      "URL_MISMATCH_ERR (21): the given URL does not match another URL",
-      "QUOTA_EXCEEDED_ERR (22): the quota has been exceeded",
-      "TIMEOUT_ERR (23): a timeout occurred",
-      "INVALID_NODE_TYPE_ERR (24): the supplied node is invalid or has an invalid ancestor for this operation",
-      "DATA_CLONE_ERR (25): the object can not be cloned."
-    ];
-    var constants = {
-      INDEX_SIZE_ERR,
-      DOMSTRING_SIZE_ERR: 2,
-      HIERARCHY_REQUEST_ERR,
-      WRONG_DOCUMENT_ERR,
-      INVALID_CHARACTER_ERR,
-      NO_DATA_ALLOWED_ERR: 6,
-      NO_MODIFICATION_ALLOWED_ERR,
-      NOT_FOUND_ERR,
-      NOT_SUPPORTED_ERR,
-      INUSE_ATTRIBUTE_ERR: 10,
-      INVALID_STATE_ERR,
-      SYNTAX_ERR,
-      INVALID_MODIFICATION_ERR,
-      NAMESPACE_ERR,
-      INVALID_ACCESS_ERR,
-      VALIDATION_ERR: 16,
-      TYPE_MISMATCH_ERR,
-      SECURITY_ERR,
-      NETWORK_ERR,
-      ABORT_ERR,
-      URL_MISMATCH_ERR,
-      QUOTA_EXCEEDED_ERR,
-      TIMEOUT_ERR,
-      INVALID_NODE_TYPE_ERR,
-      DATA_CLONE_ERR
-    };
-    function DOMException(code) {
-      Error.call(this);
-      Error.captureStackTrace(this, this.constructor);
-      this.code = code;
-      this.message = messages[code];
-      this.name = names[code];
-    }
-    DOMException.prototype.__proto__ = Error.prototype;
-    for (c in constants) {
-      v = { value: constants[c] };
-      Object.defineProperty(DOMException, c, v);
-      Object.defineProperty(DOMException.prototype, c, v);
-    }
-    var v;
-    var c;
-  }
-});
 var require_config = __commonJS({
   "external/npm/node_modules/domino/lib/config.js"(exports) {
     exports.isApiWritable = !globalThis.__domino_frozen__;
@@ -2433,8 +2325,6 @@ var require_config = __commonJS({
 });
 var require_utils = __commonJS({
   "external/npm/node_modules/domino/lib/utils.js"(exports) {
-    var DOMException = require_DOMException();
-    var ERR = DOMException;
     var isApiWritable = require_config().isApiWritable;
     exports.NAMESPACE = {
       HTML: "http://www.w3.org/1999/xhtml",
@@ -2444,68 +2334,77 @@ var require_utils = __commonJS({
       SVG: "http://www.w3.org/2000/svg",
       XLINK: "http://www.w3.org/1999/xlink"
     };
-    exports.IndexSizeError = function() {
-      throw new DOMException(ERR.INDEX_SIZE_ERR);
+    exports.IndexSizeError = () => {
+      throw new DOMException("The index is not in the allowed range", "IndexSizeError");
     };
-    exports.HierarchyRequestError = function() {
-      throw new DOMException(ERR.HIERARCHY_REQUEST_ERR);
+    exports.HierarchyRequestError = () => {
+      throw new DOMException("The node tree hierarchy is not correct", "HierarchyRequestError");
     };
-    exports.WrongDocumentError = function() {
-      throw new DOMException(ERR.WRONG_DOCUMENT_ERR);
+    exports.WrongDocumentError = () => {
+      throw new DOMException("The object is in the wrong Document", "WrongDocumentError");
     };
-    exports.InvalidCharacterError = function() {
-      throw new DOMException(ERR.INVALID_CHARACTER_ERR);
+    exports.InvalidCharacterError = () => {
+      throw new DOMException("The string contains invalid characters", "InvalidCharacterError");
     };
-    exports.NoModificationAllowedError = function() {
-      throw new DOMException(ERR.NO_MODIFICATION_ALLOWED_ERR);
+    exports.NoModificationAllowedError = () => {
+      throw new DOMException("The object cannot be modified", "NoModificationAllowedError");
     };
-    exports.NotFoundError = function() {
-      throw new DOMException(ERR.NOT_FOUND_ERR);
+    exports.NotFoundError = () => {
+      throw new DOMException("The object can not be found here", "NotFoundError");
     };
-    exports.NotSupportedError = function() {
-      throw new DOMException(ERR.NOT_SUPPORTED_ERR);
+    exports.NotSupportedError = () => {
+      throw new DOMException("The operation is not supported", "NotSupportedError");
     };
-    exports.InvalidStateError = function() {
-      throw new DOMException(ERR.INVALID_STATE_ERR);
+    exports.InvalidStateError = () => {
+      throw new DOMException("The object is in an invalid state", "InvalidStateError");
     };
-    exports.SyntaxError = function() {
-      throw new DOMException(ERR.SYNTAX_ERR);
+    exports.SyntaxError = () => {
+      throw new DOMException("The string did not match the expected pattern", "SyntaxError");
     };
-    exports.InvalidModificationError = function() {
-      throw new DOMException(ERR.INVALID_MODIFICATION_ERR);
+    exports.InvalidModificationError = () => {
+      throw new DOMException("The object can not be modified in this way", "InvalidModificationError");
     };
-    exports.NamespaceError = function() {
-      throw new DOMException(ERR.NAMESPACE_ERR);
+    exports.NamespaceError = () => {
+      throw new DOMException("The operation is not allowed by Namespaces in XML", "NamespaceError");
     };
-    exports.InvalidAccessError = function() {
-      throw new DOMException(ERR.INVALID_ACCESS_ERR);
+    exports.InvalidAccessError = () => {
+      throw new DOMException(
+        "The object does not support the operation or argument",
+        "InvalidAccessError"
+      );
     };
-    exports.TypeMismatchError = function() {
-      throw new DOMException(ERR.TYPE_MISMATCH_ERR);
+    exports.TypeMismatchError = () => {
+      throw new DOMException(
+        "The type of the object does not match the expected type",
+        "TypeMismatchError"
+      );
     };
-    exports.SecurityError = function() {
-      throw new DOMException(ERR.SECURITY_ERR);
+    exports.SecurityError = () => {
+      throw new DOMException("The operation is insecure", "SecurityError");
     };
-    exports.NetworkError = function() {
-      throw new DOMException(ERR.NETWORK_ERR);
+    exports.NetworkError = () => {
+      throw new DOMException("A network error occurred", "NetworkError");
     };
-    exports.AbortError = function() {
-      throw new DOMException(ERR.ABORT_ERR);
+    exports.AbortError = () => {
+      throw new DOMException("The operation was aborted", "AbortError");
     };
-    exports.UrlMismatchError = function() {
-      throw new DOMException(ERR.URL_MISMATCH_ERR);
+    exports.UrlMismatchError = () => {
+      throw new DOMException("The given URL does not match another URL", "URLMismatchError");
     };
-    exports.QuotaExceededError = function() {
-      throw new DOMException(ERR.QUOTA_EXCEEDED_ERR);
+    exports.QuotaExceededError = () => {
+      throw new DOMException("The quota has been exceeded", "QuotaExceededError");
     };
-    exports.TimeoutError = function() {
-      throw new DOMException(ERR.TIMEOUT_ERR);
+    exports.TimeoutError = () => {
+      throw new DOMException("The operation timed out", "TimeoutError");
     };
-    exports.InvalidNodeTypeError = function() {
-      throw new DOMException(ERR.INVALID_NODE_TYPE_ERR);
+    exports.InvalidNodeTypeError = () => {
+      throw new DOMException("The node is of an invalid type", "InvalidNodeTypeError");
     };
-    exports.DataCloneError = function() {
-      throw new DOMException(ERR.DATA_CLONE_ERR);
+    exports.DataCloneError = () => {
+      throw new DOMException("The object can not be cloned", "DataCloneError");
+    };
+    exports.InUseAttributeError = () => {
+      throw new DOMException("The attribute is already in use", "InUseAttributeError");
     };
     exports.nyi = function() {
       throw new Error("NotYetImplemented");
@@ -2520,7 +2419,10 @@ var require_utils = __commonJS({
     };
     exports.expose = function(src, c) {
       for (var n in src) {
-        Object.defineProperty(c.prototype, n, { value: src[n], writable: isApiWritable });
+        Object.defineProperty(c.prototype, n, {
+          value: src[n],
+          writable: isApiWritable
+        });
       }
     };
     exports.merge = function(a, b) {
@@ -4956,7 +4858,6 @@ var require_Element = __commonJS({
     var NodeList = require_NodeList();
     var NodeUtils = require_NodeUtils();
     var FilteredElementList = require_FilteredElementList();
-    var DOMException = require_DOMException();
     var DOMTokenList = require_DOMTokenList();
     var select = require_select();
     var ContainerNode = require_ContainerNode();
@@ -5409,7 +5310,7 @@ var require_Element = __commonJS({
       } },
       setAttributeNode: { value: function setAttributeNode(attr) {
         if (attr.ownerElement !== null && attr.ownerElement !== this) {
-          throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR);
+          utils.InUseAttributeError();
         }
         var result = null;
         var oldAttrs = this._attrsByQName[attr.name];
@@ -5422,7 +5323,7 @@ var require_Element = __commonJS({
           })) {
             return attr;
           } else if (attr.ownerElement !== null) {
-            throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR);
+            utils.InUseAttributeError();
           }
           oldAttrs.forEach(function(a) {
             this.removeAttributeNode(a);
@@ -5434,7 +5335,7 @@ var require_Element = __commonJS({
       } },
       setAttributeNodeNS: { value: function setAttributeNodeNS(attr) {
         if (attr.ownerElement !== null) {
-          throw new DOMException(DOMException.INUSE_ATTRIBUTE_ERR);
+          utils.InUseAttributeError();
         }
         var ns = attr.namespaceURI;
         var key = (ns === null ? "" : ns) + "|" + attr.localName;
@@ -17942,7 +17843,6 @@ var require_impl = __commonJS({
       CSSStyleDeclaration: require_CSSStyleDeclaration(),
       CharacterData: require_CharacterData(),
       Comment: require_Comment(),
-      DOMException: require_DOMException(),
       DOMImplementation: require_DOMImplementation(),
       DOMTokenList: require_DOMTokenList(),
       Document: require_Document(),
@@ -18079,13 +17979,13 @@ applyShims();
 zone.js/fesm2015/zone-node.js:
   (**
    * @license Angular v<unknown>
-   * (c) 2010-2024 Google LLC. https://angular.io/
+   * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/platform-server/fesm2022/init.mjs:
   (**
-   * @license Angular v19.2.3
+   * @license Angular v19.2.14
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
