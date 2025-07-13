@@ -84031,6 +84031,7 @@ var TabelEmployeeComponent = class _TabelEmployeeComponent {
     if (this.editingId === jobToDelete.id || this.editingId === jobToDelete.tempId) {
       this.editingId = null;
     }
+    this.jobForm.patchValue({ publication_date: this.formatDate(/* @__PURE__ */ new Date()) });
   }
   addNewJob() {
     this.editingId = null;

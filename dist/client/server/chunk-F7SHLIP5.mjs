@@ -115057,6 +115057,7 @@ var TabelEmployeeComponent = class _TabelEmployeeComponent {
     if (this.editingId === jobToDelete.id || this.editingId === jobToDelete.tempId) {
       this.editingId = null;
     }
+    this.jobForm.patchValue({ publication_date: this.formatDate(/* @__PURE__ */ new Date()) });
   }
   addNewJob() {
     this.editingId = null;
@@ -119382,4 +119383,4 @@ sweetalert2/dist/sweetalert2.esm.all.js:
   * Released under the MIT License.
   *)
 */
-//# sourceMappingURL=chunk-JUACUAXF.mjs.map
+//# sourceMappingURL=chunk-F7SHLIP5.mjs.map

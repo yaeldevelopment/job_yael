@@ -166,6 +166,7 @@ export class TabelEmployeeComponent implements OnInit {
     if (this.editingId === jobToDelete.id || this.editingId === jobToDelete.tempId) {
       this.editingId = null;
     }
+        this.jobForm.patchValue({ publication_date: this.formatDate(new Date()) });
   }
 
   addNewJob() {
