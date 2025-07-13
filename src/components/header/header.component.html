@@ -1,18 +1,30 @@
 
-@if (isLoggedIn$ | async; as is_login) {
-  
-    @if (is_login === 3) {
-      <div class="spinner">טוען...</div>
-    }
-    @else {
-        <nav>
+
+    <nav>
       <ul>
-      
-        <li><a href="/" > <img class="logo" src="./assets/logo.webp" width="50" height="50">דרושים</a></li>
-        @if (is_login === 1) {
-          <li><a href="/התחברות">כניסה לאזור אישי</a></li>
+        @if (is_login === 0|| is_login===1) {
+          <li>
+            <a href="/">
+              <img class="logo" src="./assets/logo.webp" width="50" height="50" alt="logo">
+              דרושים
+            </a>
+          </li>
+        } @else if (is_login === 2) {
+          <li>
+            <a href="/">
+              <img class="logo" src="./assets/logo.webp" width="50" height="50" alt="logo">
+              ניהול משרות
+            </a>
+          </li>
         }
-        @else {
+        @if (is_login === 0)
+      {
+        <li>
+            <a routerLink="/התחברות">כניסה לאזור אישי</a>
+          </li>
+      }
+          
+         @else if (is_login === 1 || is_login === 2) {
           <li class="dropdown">
             <button class="my_details">האזור האישי שלך</button>
             <ul class="dropdown-menu">
@@ -23,8 +35,6 @@
         }
       </ul>
     </nav>
-    }
-  }
-  @else {
+  
+  <router-outlet />
 
-  }

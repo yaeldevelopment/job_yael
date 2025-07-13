@@ -10,9 +10,12 @@ h1,h2,h3,h4{
     text-align: center;
     margin: 15px;
 }
+
 .container{
+  max-width: 80%;
     .row{
       justify-content: center;  margin: 40px auto; 
+      border: 0;
     }
    
 
@@ -86,4 +89,21 @@ cursor: pointer;
   text-overflow: ellipsis;
         }
      
-        
+        /* עוטף הטבלה – מאפשר גלילה אופקית */
+.job-table {
+  overflow-x: auto;
+}
+
+/* מונע שבירת טקסט ומבטיח שורות באותה שורה */
+.job-table table {
+  min-width: 1200px;      // גודל מינימלי לטבלה; אפשר להגדיל/להקטין
+  white-space: nowrap;    // לא לשבור שורות בתאים
+}
+
+/* כותרת צפה בזמן גלילה (אופציונלי) */
+.job-table th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}

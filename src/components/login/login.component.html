@@ -24,7 +24,33 @@
       @if(step===0){
       <form  [formGroup]="loginForm" class="loginForm" (ngSubmit)="onSubmit()">
         <h2>כניסה למערכת</h2>
+          <div>
+     <div class="row">
+      <label for="is_employee_employer">האם את מעסיק או דורש עבודה?</label>
+        <div class="col-6 d-flex">
+              <label for="is_employee_employer">דורש/ת עבודה</label>
+      <input id="employee" formControlName="is_employer" [value]="0"    type="radio" />
+     
+</div>
+        <div class="col-6 d-flex">
+              <label for="is_employee_employer">מעסיק</label>
+
+         <input id="employer" formControlName="is_employer" [value]="1" type="radio" />
+</div>
+
+      @if(loginForm.get('email')?.invalid || loginForm.get('email')?.touched){
+        
+        @if(loginForm.get('email')?.errors?.['required']){
+   <small >הכנס מייל</small>}
+   @else if(loginForm.get('email')?.errors?.['email']){
+        <small>הכנס מייל תקין</small>
+      }
+ 
+    }
+   </div>
+      </div>
     <div>
+
       <label for="email">מייל</label>
       <input id="email" formControlName="email" type="email" /><div class="error_message">
       @if(loginForm.get('email')?.invalid || loginForm.get('email')?.touched){
@@ -69,6 +95,18 @@
 
     <h2>טופס יצירת משתמש </h2>
     <form  [formGroup]="CreateUserForm" class="" (ngSubmit)="CreateUser()">
+             <div class="row">
+      <label for="is_employee_employer">האם את מעסיק או דורש עבודה?</label>
+        <div class="col-6 d-flex">
+              <label for="is_employee_employer">דורש/ת עבודה</label>
+      <input id="employee" formControlName="is_employer" [value]="0"    type="radio" />
+     
+</div>
+        <div class="col-6 d-flex">
+              <label for="is_employee_employer">מעסיק</label>
+
+         <input id="employer" formControlName="is_employer" [value]="1" type="radio" />
+</div></div>
   <div>
     <label for="email">מייל</label>
     <input id="email" formControlName="email" type="email" /><div class="error_message">
@@ -86,7 +124,21 @@
 
     <div>
       <label for="password">סיסמא</label>
-      <input id="password" formControlName="password" type="password" />
+      
+      <input
+    [type]="passwordVisible ? 'text' : 'password'"
+    formControlName="password"
+    placeholder="סיסמה"
+    class="form-control"
+  />
+  <button
+    type="button"
+    class="btn btn-sm show_pass  btn-outline-secondary position-absolute  mt-1 me-1"
+    (click)="togglePasswordVisibility()"
+    tabindex="-1"
+  >
+    <i class="bi" [ngClass]="passwordVisible ? 'bi-eye-slash' : 'bi-eye'"></i>
+  </button>
       <div class="error_message">
         @if(CreateUserForm.get('password')?.hasError('required')){ 
              <small >הכנס סיסמא</small>
@@ -104,7 +156,20 @@
     
     <div>
       <label for="verification">אימות סיסמא</label>
-      <input id="verification" formControlName="verification" type="password" />
+       <input  id="verification"
+    [type]="confirmPasswordVisible ? 'text' : 'password'"
+    formControlName="verification"
+    class="form-control"
+  />
+  <button
+    type="button"
+    class="btn btn-sm btn-outline-secondary show_pass position-absolute  mt-1 me-1"
+    (click)="toggleConfirmPasswordVisibility()"
+    tabindex="-1"
+  >
+    <i class="bi" [ngClass]="confirmPasswordVisible ? 'bi-eye-slash' : 'bi-eye'"></i>
+  </button>
+  
       <div class="error_message">
         @if(CreateUserForm.get('verification')?.hasError('required')){  
                <small >הכנס שוב סיסמא</small>
@@ -204,7 +269,7 @@
    
   } </div>
   </div>
-
+ @if(CreateUserForm.get('is_employer')?.value===0){
   <div class="file-upload" (mousedown)="openFileDialog($event)">
     <label for="resume" class="file-label">📄 העלה קובץ קורות חיים</label>
     <input #fileInput id="resume" formControlName="resume" type="file" class="file-input" accept=".pdf" (change)="onFileSelected($event)" hidden />
@@ -218,6 +283,25 @@
       }
     }
   </div>
+  }
+  @if(CreateUserForm.get('is_employer')?.value>0){
+
+  
+      <div>
+      <label for="address">כתובת</label>
+      <input id="address" formControlName="address" type="text" />
+      <div class="error_message">
+        @if(CreateUserForm.get('address')?.hasError('required')){ 
+             <small >הכנס כתובת</small>
+        } 
+        @else if (CreateUserForm.get('address')?.hasError('minlength')) {
+                  <small>הכתובת חייבת להכיל לפחות 2 תווים</small>
+        }
+
+
+
+      </div>
+    </div>}
   
   <p class="message_tey"></p>
   <button type="submit" [disabled]="CreateUserForm.invalid">יצירת חשבון</button>

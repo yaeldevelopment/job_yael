@@ -11,7 +11,8 @@
       "forceConsistentCasingInFileNames": true
     },
     "angularCompilerOptions": {
-      "strictTemplates": true
+      "strictTemplates": true  ,
+      "enableControlFlow": true
     }
   }
   

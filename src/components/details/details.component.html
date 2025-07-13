@@ -1,7 +1,8 @@
 <div class="container mt-4">
+  @if (employee) {
     <div class="card shadow-lg p-4">
       <h2 class="text-center mb-4">פרטים אישיים</h2>
-  
+
       <div class="row">
         <div class="col-md-6">
           <p><strong>שם פרטי:</strong> {{ employee.first_name }}</p>
@@ -11,33 +12,50 @@
         <div class="col-md-6">
           <p><strong>מייל:</strong> {{ employee.mail }}</p>
           <p><strong>טלפון:</strong> {{ employee.phone }}</p>
- 
         </div>
       </div>
-      <div class="upload-container">       
+
+      <div class="upload-container">
         <h3>📄 קובץ קיים</h3>
 
-        @if(resumeUrl!=""){
-          <iframe [src]="sanitizer.bypassSecurityTrustResourceUrl(resumeUrl)" width="100%" height="400px"></iframe>
+        @if (resumeUrl) {
+          <iframe [src]="safeResumeUrl" width="100%" height="400px"></iframe>
+        } @else {
+          <p>❌ אין קובץ קיים למשתמש זה.</p>
         }
-        @else if(!resumeUrl) {
-           <p >❌ אין קובץ קיים למשתמש זה.</p>
-        }
-       
-      
+
         <h3>📤 העלאת קובץ חדש</h3>
-        <input [attr.key]="fileInputKey" type="file"  #fileInput (change)="onFileSelected($event)" accept=".pdf">
-        <button 
-        [disabled]="!selectedFile || isUploading" 
-        class="change_file" 
-        (click)="uploadFile()">
-        🔄 החלפת קובץ
-      </button>
+        <input
+          [attr.key]="fileInputKey"
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept=".pdf"
+        >
+        <button
+          [disabled]="!selectedFile || isUploading"
+          class="change_file"
+          (click)="uploadFile()">
+          🔄 החלפת קובץ
+        </button>
       </div>
-  
-
-
-
     </div>
-  </div>
-  
+  } @else if (employerse) {
+    <div class="card shadow-lg p-4">
+      <h2 class="text-center mb-4">פרטים אישיים</h2>
+
+      <div class="row">
+        <div class="col-md-5">
+          <p><strong>שם פרטי:</strong> {{ employerse.first_name }}</p>
+          <p><strong>שם משפחה:</strong> {{ employerse.last_name }}</p>
+          <p><strong>כתובת:</strong> {{ employerse.address }}</p>
+        </div>
+        <div class="col-md-7">
+          <p><strong>מייל:</strong> {{ employerse.mail }}</p>
+          <p><strong>טלפון:</strong> {{ employerse.phone }}</p>
+          <p><strong>תאריך לידה:</strong> {{ employerse.birth_date }}</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

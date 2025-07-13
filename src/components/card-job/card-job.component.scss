@@ -32,8 +32,9 @@
     margin-bottom: 5px;
   }
   .job-description{
-    min-height: 90px;
-    .limit-row{
+
+    .limit-row{ 
+         min-height: 90px;
           -webkit-line-clamp: 3; // מספר השורות
     }
 

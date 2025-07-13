@@ -18,6 +18,14 @@ import { UploadService } from '../../services/upload-service.service';
 import server from '../../models/api';
 import { NotificationService } from '../../services/notification-service.service';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { EmployerseService } from '../../services/employerse.service';
+import employerse_login from '../../models/employerse_login';
+import { employerse } from '../../models/employerse';
+import { AuthService } from '../../services/auth-service.service';
+import { JobsService } from '../../services/jobs.service';
+import { Job } from '../../models/Jobs';
+import { CommonModule } from '@angular/common';
+
 
 
 @Component({
@@ -25,7 +33,7 @@ import { LocalStorageService } from '../../services/local-storage.service';
   standalone: true,
   imports: [ReactiveFormsModule ,MatDatepickerModule,
     MatNativeDateModule,
-    MatInputModule  , // ✅ נדרש רק ב-Root Module
+    MatInputModule  ,CommonModule // ✅ נדרש רק ב-Root Module
     ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -69,13 +77,56 @@ verifyCode() {
  }
 
 }
+
+confirmPasswordVisible = false;
+toggleConfirmPasswordVisibility() {
+  this.confirmPasswordVisible = !this.confirmPasswordVisible;
+}
   selectedFile!:File ; 
   resetPasswordForm!:FormGroup;
   step:number=0;
   verificationCode!:FormGroup;
   onResetPassword() {
+      const isEmployer = this.loginForm.get('is_employer')?.value;
 
-     this.employeesServ.reset_password( this.localStorageService.getItemWithExpiry("mail")?.value!,this.resetPasswordForm.get("verification")?.value).subscribe({
+  if (isEmployer > 0) {
+     this.employerseService.reset_password( this.localStorageService.getItemWithExpiry("mail")?.value!,this.resetPasswordForm.get("verification")?.value).subscribe({
+      next: response => {
+        
+  
+         this.localStorageService.setItemWithExpiry("Employerse",  response.user, 86400000);
+    
+
+             this.servjobs.get_all_jobs().subscribe({
+          next: (jobs: Job[]) => {
+ 
+            let filteredJobs = jobs.filter(job => String(job.employer) === String(response.user.id));
+   
+
+            this.localStorageService.setItemWithExpiry("JobsByEmployer", filteredJobs, 86400000);
+
+            $(".message_tey")?.text("");
+            this.authService.login();
+            this.router.navigate(['/']).then(() => {
+              window.location.reload();
+            });
+          },
+          error: (err) => {
+            console.error('שגיאה בקבלת משרות:', err);
+            $(".message_tey")?.text("שגיאה בקבלת משרות");
+          }
+        });
+        this.notificationService.showPopup('success', 'הצלחת', 'הסיסמא שונתה בהצלחה',this.onClose );
+
+      },
+      error: error => {
+    
+        this.notificationService.showError();
+      }
+    });
+  }
+  else{
+        this.employeesServ.reset_password( this.localStorageService.getItemWithExpiry("mail")?.value!,this.resetPasswordForm.get("verification")?.value).subscribe({
       next: response => {
         
         this.localStorageService.setItemWithExpiry("Employee", response.user || "",86400000);
@@ -88,10 +139,97 @@ verifyCode() {
       }
     });
   }
+  }
   
   CreateUser() {
+   
     $("button[type='submit']").attr("disabled","true");
-    const allowedTypes = [
+ if (this.CreateUserForm.get("is_employer")?.value > 0) {
+  this.employerseService.getByemployerse(this.CreateUserForm.get('email')?.value).subscribe({
+    next: x => {
+      if (x && x.id) {
+        alert("המשתמש כבר קיים במערכת");
+        return;
+      }
+
+      // המשתמש לא קיים - ניצור חדש
+      const e = new employerse(
+        "", // id ייווצר בשרת
+
+        this.CreateUserForm.get('email')?.value,
+                this.CreateUserForm.get('password')?.value,
+        this.CreateUserForm.get('phone')?.value,
+        this.CreateUserForm.get('address')?.value,
+        this.CreateUserForm.get('first_name')?.value,
+        this.CreateUserForm.get('last_name')?.value,
+        this.CreateUserForm.get('birth_date')?.value
+      );
+
+      this.employerseService.post_employerse(e).subscribe({
+        next: (createdEmployerse: employerse) => {
+          this.localStorageService.setItemWithExpiry("Employerse", createdEmployerse, 86400000);
+
+          this.router.navigate(['/']).then(() => {
+            window.location.reload();
+            this.notificationService.showPopup(
+              'success',
+              'המשתמש נוצר בהצלחה',
+              'ברוכים הבאים, מקווים שתהנו'
+            );
+          });
+        },
+        error: err => {
+          console.error("שגיאה בשמירת המשתמש:", err);
+          alert("אירעה שגיאה ביצירת המשתמש. נסה שוב.");
+        }
+      });
+    },
+    error: err => {
+      if (err.status === 404) {
+        // המשתמש לא קיים - ניצור אותו
+        const e = new employerse(
+          "", // id ייווצר בשרת
+          this.CreateUserForm.get('email')?.value,
+                this.CreateUserForm.get('password')?.value,
+          
+          this.CreateUserForm.get('phone')?.value,
+          this.CreateUserForm.get('address')?.value,
+          this.CreateUserForm.get('first_name')?.value,
+          this.CreateUserForm.get('last_name')?.value,
+          this.CreateUserForm.get('birth_date')?.value
+        );
+
+        this.employerseService.post_employerse(e).subscribe({
+          next: (createdEmployerse: employerse) => {
+            this.localStorageService.setItemWithExpiry("Employerse", createdEmployerse, 86400000);
+
+            this.router.navigate(['/']).then(() => {
+              window.location.reload();
+              this.notificationService.showPopup(
+                'success',
+                'המשתמש נוצר בהצלחה',
+                'ברוכים הבאים, מקווים שתהנו'
+              );
+            });
+          },
+          error: err => {
+            console.error("שגיאה בשמירת המשתמש:", err);
+            alert("אירעה שגיאה ביצירת המשתמש. נסה שוב.");
+          }
+        });
+      } else {
+        console.error("שגיאה בלתי צפויה:", err);
+        alert("אירעה שגיאה, נסה שוב");
+      }
+    }
+  });
+}
+    
+    
+
+    
+    else{
+ const allowedTypes = [
       "application/pdf",
     
     ];
@@ -148,6 +286,9 @@ verifyCode() {
     
     })
  
+    }
+    
+   
   }
   
 onFileSelected(event: any) {
@@ -173,51 +314,101 @@ forgotPasswordVisible = false; // משתנה ב-Component לניהול ההופ�
   selectLoginType(type: number) {
     this.step = type;
   }
-  async onSubmit() {
-    $("button[type='submit']").attr("disabled", "true");
-  
-    this.employeesServ.get_employee(new employee_login(
-      this.loginForm.get('email')?.value, 
-      this.loginForm.get('password')?.value
-    )).pipe(
-      tap((data: employees | string) => {
+async onSubmit() {
+  $("button[type='submit']").attr("disabled", "true");
+
+  const email = this.loginForm.get('email')?.value;
+  const password = this.loginForm.get('password')?.value;
+  const isEmployer = this.loginForm.get('is_employer')?.value;
+
+  if (isEmployer > 0) {
+    try {
+      const data = await this.employerseService.getemployerse(new employerse_login(email, password)).toPromise();
     
+
+      if (data && typeof data !== 'string') {
+        this.localStorageService.setItemWithExpiry("Employerse", data, 86400000);
+    
+
+        this.servjobs.get_all_jobs().subscribe({
+          next: (jobs: Job[]) => {
+      
+            let filteredJobs = jobs.filter(job => String(job.employer) === String(data.id));
         
-        if (typeof data !== 'string') {
-          this.employeesServ.setEmployee(data);
-     
-        } else {
-     
-          this.localStorageService.setItemWithExpiry("mail",   this.loginForm.get('email')?.value,86400000);
-          this.step=2;
-          $(".message_tey")?.text("סיסמה שגויה, נסה שוב או לחץ על 'שכחתי סיסמה'");
-        }
-      }),
-      catchError((error) => {
-        if (error.status === 401) { 
-          // טיפול במקרה של סיסמה שגויה
-          this.forgotPasswordVisible = true;
-    
-          this.localStorageService.setItemWithExpiry("mail",   this.loginForm.get('email')?.value,86400000);
-          $(".message_tey")?.text("סיסמה שגויה, נסה שוב או לחץ על 'שכחתי סיסמה'");
-        } else if (error.status === 404) { 
-          $(".message_tey")?.text("משתמש זה אינו קיים");
-        } else {
-          $(".message_tey")?.text("שגיאה בלתי צפויה, נסה שוב מאוחר יותר");
-        }
-        return of(null); // מחזירים Observable ריק כדי שהזרימה לא תקרוס
-      })
-    )
-    .subscribe(() => {
-      if (this.employeesServ.getEmployee() != null) {
+
+            this.localStorageService.setItemWithExpiry("JobsByEmployer", filteredJobs, 86400000);
+
+            $(".message_tey")?.text("");
+            this.authService.login();
+            this.router.navigate(['/']).then(() => {
+              window.location.reload();
+            });
+          },
+          error: (err) => {
+            console.error('שגיאה בקבלת משרות:', err);
+            $(".message_tey")?.text("שגיאה בקבלת משרות");
+          }
+        });
+
+      } else {
+        
+        this.localStorageService.setItemWithExpiry("mail", email, 86400000);
+        this.step = 2;
+        $(".message_tey")?.text("סיסמה שגויה, נסה שוב או לחץ על 'שכחתי סיסמה'");
+      }
+
+    } catch (error: any) {
+      console.error('שגיאה בכניסה:', error);
+      this.localStorageService.setItemWithExpiry("mail", email, 86400000);
+
+      if (error.status === 401) {
+        this.forgotPasswordVisible = true;
+        $(".message_tey")?.text("סיסמה שגויה, נסה שוב או לחץ על 'שכחתי סיסמה'");
+      } else if (error.status === 404) {
+        $(".message_tey")?.text("משתמש זה אינו קיים");
+      } else {
+        $(".message_tey")?.text("שגיאה בלתי צפויה, נסה שוב מאוחר יותר");
+      }
+    }
+
+  } else {
+    // עובד רגיל
+    try {
+      const data = await this.employeesServ.get_employee(new employee_login(email, password)).toPromise();
+   
+
+      if (typeof data !== 'string') {
+        this.localStorageService.setItemWithExpiry("Employee", data, 86400000);
+
         $(".message_tey")?.text("");
-        this.localStorageService.setItemWithExpiry("Employee", this.employeesServ.getEmployee() || "",86400000);
+        this.authService.login();
         this.router.navigate(['/']).then(() => {
           window.location.reload();
         });
+
+      } else {
+
+        this.localStorageService.setItemWithExpiry("mail", email, 86400000);
+        this.step = 2;
+        $(".message_tey")?.text("סיסמה שגויה, נסה שוב או לחץ על 'שכחתי סיסמה'");
       }
-    });
+
+    } catch (error: any) {
+      console.error('שגיאה בכניסת עובד:', error);
+      this.localStorageService.setItemWithExpiry("mail", email, 86400000);
+
+      if (error.status === 401) {
+        this.forgotPasswordVisible = true;
+        $(".message_tey")?.text("סיסמה שגויה, נסה שוב או לחץ על 'שכחתי סיסמה'");
+      } else if (error.status === 404) {
+        $(".message_tey")?.text("משתמש זה אינו קיים");
+      } else {
+        $(".message_tey")?.text("שגיאה בלתי צפויה, נסה שוב מאוחר יותר");
+      }
+    }
   }
+}
+
 
   generateSecureRandomPassword(): string {
     const array = new Uint32Array(1);
@@ -259,7 +450,11 @@ minAgeValidator(minAge: number) {
   };}
   loginForm!:FormGroup;
   CreateUserForm!:FormGroup;  // ולידציה לסיסמה חזקה (דוגמא בסיסית)
+passwordVisible = false;
 
+togglePasswordVisibility() {
+  this.passwordVisible = !this.passwordVisible;
+}
 
   // בדיקת חוזק סיסמה (סינכרוני)
   strongPasswordValidator(control: AbstractControl): ValidationErrors | null {
@@ -281,7 +476,9 @@ minAgeValidator(minAge: number) {
     const verification = group.get('verification')?.value;
     return password && verification && password !== verification ? { passwordsNotMatching: true } : null;
   }
-constructor(private notificationService:NotificationService,private fb:FormBuilder,private Encryption_Service:EncryptionService,private employeesServ:EmployeesService,private router: Router,private uploadService:UploadService,private localStorageService:LocalStorageService){
+constructor(private servjobs:JobsService,private notificationService:NotificationService,private fb:FormBuilder,private Encryption_Service:EncryptionService,private employeesServ:EmployeesService,private router: Router,private uploadService:UploadService,
+  private localStorageService:LocalStorageService
+  ,private employerseService:EmployerseService,private authService:AuthService){
   this.resetPasswordForm = this.fb.group({
     password: ['', Validators.required],
     verification: ['', Validators.required]
@@ -289,29 +486,53 @@ constructor(private notificationService:NotificationService,private fb:FormBuild
   ,{ validators: this.passwordMatchValidator } // ✅ וולידציה של התאמת הסיסמאות ברמת ה-FormGroup
 );
 
-  this.loginForm = this.fb.group({
+this.loginForm = this.fb.group({
+  email: ['', [Validators.required, Validators.email]],
+  password: ['', [Validators.required, Validators.minLength(6)]],
+  is_employer: [0, Validators.required]
+});
+   this.CreateUserForm = this.fb.group({
+    is_employer: [0, Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
-
-  });
-  this.CreateUserForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6), this.strongPasswordValidator]], // ✅ העברת הוולידציה לכאן
+    password: ['', [Validators.required, Validators.minLength(6), this.strongPasswordValidator]],
     verification: ['', [Validators.required, Validators.minLength(6)]],
     first_name: ['', [Validators.required, Validators.minLength(2)]],
     last_name: ['', [Validators.required, Validators.minLength(2)]],
     birth_date: ['', [Validators.required, this.minAgeValidator(18)]],
     phone: ['', [Validators.required, Validators.pattern(/^\+?\d{1,3}\d{9,15}$/)]],
-    resume: ['', [Validators.required, Validators.minLength(6)]]
-  }, 
-  { validators: this.passwordMatchValidator } // ✅ וולידציה של התאמת הסיסמאות ברמת ה-FormGroup
-  );
+    resume: [''],   // בלי ולידטורים כרגע
+    address: [''],  // גם בלי ולידטורים כרגע
+  }, {
+    validators: [this.passwordMatchValidator]
+  });
+
+  this.handleEmployerChange(); // הקשב לשינויים בשדה
 
 this.verificationCode  = this.fb.group({
   Code: ['', [Validators.required, Validators.min(6)]],
 
 })
 }
+handleEmployerChange() {
+  this.CreateUserForm.get('is_employer')?.valueChanges.subscribe(val => {
+    const resumeCtrl = this.CreateUserForm.get('resume');
+    const addressCtrl = this.CreateUserForm.get('address');
+
+    if (val === 0) {
+      // דורש עבודה – צריך קובץ קו"ח, לא צריך כתובת
+      resumeCtrl?.setValidators([Validators.required, Validators.minLength(6)]);
+      addressCtrl?.clearValidators();
+    } else {
+      // מעסיק – צריך כתובת, לא צריך קובץ קו"ח
+      addressCtrl?.setValidators([Validators.required, Validators.minLength(2)]);
+      resumeCtrl?.clearValidators();
+    }
+
+    resumeCtrl?.updateValueAndValidity();
+    addressCtrl?.updateValueAndValidity();
+  });
+}
+
 
 
 }

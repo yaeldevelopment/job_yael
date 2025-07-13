@@ -1,7 +1,7 @@
 
 export class employerse{
   
-    constructor(public Id:string,public mail:string,public phone:string,public address:string,public first_name:string,public last_name:string,public idManager:string ) {
+    constructor(public id:string,public mail:string,public password:string,public phone:string,public address:string,public first_name:string,public last_name:string,public birth_date:string) {
   
 
     }

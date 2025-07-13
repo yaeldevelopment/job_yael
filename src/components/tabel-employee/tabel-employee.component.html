@@ -1,0 +1,132 @@
+<div class="job-table container">
+ <div class="alert alert-warning mt-3 text-center" role="alert" style="direction: rtl; text-align: right;">
+  ⚠ <strong>שימו לב:</strong> האחריות על נכונות המידע המפורסם בטופס/במערכת חלה על המשתמש בלבד.<br>
+  מומלץ לוודא שכל הנתונים מלאים, מדויקים ואמיתיים.<br>
+  פרסום מידע לא מאומת, שגוי או מטעה עלול לגרום לפגיעה באמינות, ובמקרים מסוימים אף לחשיפה משפטית.
+</div>
+
+  <h2>שים לב על מנת שהטבלה תשמר לאחר כל השינויים יש ללחוץ על שמור שינויים אם לא תלחצו לאחר רענון כל השינויים ימחקו</h2>
+<form [formGroup]="jobForm" (ngSubmit)="submitForm()" class="job-form mb-4">
+  <div class="row g-2">
+    <h2>שים לב! כל השדות שמסומנות בכוכבית הינם חובה</h2>
+    <!-- כותרת -->
+    <div class="col-lg-2 col-12">
+      <label class="form-label">כותרת <span class="text-danger">*</span></label>
+      <input formControlName="title" placeholder="כותרת" class="form-control" />
+      @if(jobForm.get('title')?.invalid && jobForm.get('title')?.touched){
+        <div class="text-danger small">שדה חובה</div>
+      }
+    </div>
+
+    <!-- חברה -->
+    <div class="col-lg-2 col-12">
+      <label class="form-label">חברה <span class="text-danger">*</span></label>
+      <input formControlName="componay" placeholder="חברה" class="form-control" />
+      @if(jobForm.get('componay')?.invalid && jobForm.get('componay')?.touched){
+        <div class="text-danger small">שדה חובה</div>
+      }
+    </div>
+
+    <!-- תאריך פרסום -->
+    <div class="col-lg-2 col-12">
+      <label class="form-label">תאריך פרסום</label>
+  <input formControlName="publication_date" type="date" class="form-control" readonly />
+
+    </div>
+
+    <!-- מיקום -->
+    <div class="col-lg-2 col-12">
+      <label class="form-label">מיקום <span class="text-danger">*</span></label>
+      <input formControlName="job_location" placeholder="מיקום" class="form-control" />
+      @if(jobForm.get('job_location')?.invalid && jobForm.get('job_location')?.touched){
+        <div class="text-danger small">שדה חובה</div>
+      }
+    </div>
+
+    <!-- סוג משרה -->
+    <div class="col-lg-2 col-12">
+      <label class="form-label">סוג משרה <span class="text-danger">*</span></label>
+      <input formControlName="job_type" placeholder="סוג משרה" class="form-control" />
+      @if(jobForm.get('job_type')?.invalid && jobForm.get('job_type')?.touched){
+        <div class="text-danger small">שדה חובה</div>
+      }
+    </div>
+
+    <!-- שכר -->
+    <div class="col-lg-2 col-12">
+      <label class="form-label">שכר</label>
+      <input formControlName="salary" placeholder="שכר" class="form-control" />
+    </div>
+
+    <div class="col-lg-2 col-12">
+       <label class="form-label">תיאור התפקיד <span class="text-danger">*</span></label>
+
+          <textarea formControlName="html_word" rows="4" placeholder="תיאור התפקיד" class="form-control"></textarea>
+
+   @if(jobForm.get('html_word')?.invalid && jobForm.get('html_word')?.touched){
+    <div class="text-danger small">שדה חובה</div>
+  }
+</div>
+
+    <div class="col-lg-2 col-12">
+       <label class="form-label">דרישות <span class="text-danger">*</span></label>
+
+    <textarea formControlName="additional_conditions" rows="4" placeholder="דרישות"class="form-control"></textarea>
+  @if(jobForm.get('additional_conditions')?.invalid && jobForm.get('additional_conditions')?.touched){
+    <div class="text-danger small">שדה חובה</div>
+  }
+  </div>
+
+
+    <!-- כפתור שליחה -->
+    <div class="col-lg-2 col-12 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100" [disabled]="jobForm.invalid">
+        {{ editingId ? 'שמור עריכה' : 'הוסף משרה' }}
+      </button>
+    </div>
+<!-- כפתור חזרה להוספה -->
+ @if(editingId){
+
+ 
+<div class="col-lg-2 col-12 d-flex align-items-end" >
+  <button type="button" class="btn btn-outline-secondary" (click)="addNewJob()">
+    ↩ חזור להוספת משרה חדשה
+  </button>
+</div>
+}
+  </div>
+</form>
+
+  <div class="table-responsive">
+  <table class="table table-bordered table-sm text-center">
+    <thead>
+        
+      <tr class="row">
+        <th class="col-1">כותרת</th>
+        <th class="col-1">חברה</th>
+        <th class="col-1">תאריך</th>
+        <th class="col-2">מיקום</th>
+     <th class="col-1" >סוג משרה</th>
+        <th class="col-1">שכר</th>
+        <th class="col-2">תיאור התפקיד</th>
+        <th class="col-2">דרישות</th>
+        <th class="col-1">פעולות</th>
+      </tr>
+    </thead>
+    <tbody>
+        @if(list_jobs){
+     @for(job of list_jobs;track $index){
+
+     
+      <app-row-employee [job]="job"     (edit)="editJob($event)"
+        (delete)="deleteJobObj($event)"></app-row-employee>
+       }}
+    </tbody>
+  </table>
+  <div class="actions mt-3">
+    <button (click)="saveChanges()" class="btn btn-success save_changes">💾 שמור שינויים</button>
+  </div>
+</div>
+</div>
+
+

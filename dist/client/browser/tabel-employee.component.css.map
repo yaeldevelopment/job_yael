@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/components/tabel-employee/tabel-employee.component.scss"],
+  "sourcesContent": ["// job-table.component.scss\r\n tr.row{\r\n          margin: 0px auto !important;\r\n    }\r\n.job-table {\r\n tbody{\r\n  border: 0px;\r\n }\r\n  table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    margin-bottom: 1rem;\r\n\r\n    th, td {\r\n      border: 1px solid #ccc;\r\n      padding: 0.5rem;\r\n      text-align: right;\r\n    }\r\n  }\r\n\r\n  .form {\r\n    display: grid;\r\n    gap: 0.5rem;\r\n\r\n    input, textarea, button {\r\n      width: 100%;\r\n      padding: 0.5rem;\r\n      font-size: 1rem;\r\n    }\r\n  }\r\n}\r\n.job-table {\r\n  table {\r\n    width: 100%;\r\n    border-collapse: collapse;\r\n    margin-bottom: 1rem;\r\n    direction: rtl;\r\n\r\n  }\r\n}\r\n@media (max-width: 768px) {\r\n  .hide-on-mobile {\r\n    display: none;\r\n  }\r\n}\r\nh2{\r\n color: #68235b; \r\n     font-weight: bold;\r\n}\r\n\r\n\r\n\r\n"],
+  "mappings": ";AACC,EAAA,CAAA;AACS,UAAA,IAAA;;AAGT,CAAA,UAAA;AACC,UAAA;;AAEA,CAHD,UAGC;AACE,SAAA;AACA,mBAAA;AACA,iBAAA;;AAEA,CARH,UAQG,MAAA;AAAA,CARH,UAQG,MAAA;AACE,UAAA,IAAA,MAAA;AACA,WAAA;AACA,cAAA;;AAIJ,CAfD,UAeC,CAAA;AACE,WAAA;AACA,OAAA;;AAEA,CAnBH,UAmBG,CAJF,KAIE;AAAA,CAnBH,UAmBG,CAJF,KAIE;AAAA,CAnBH,UAmBG,CAJF,KAIE;AACE,SAAA;AACA,WAAA;AACA,aAAA;;AAKJ,CA3BD,UA2BC;AACE,SAAA;AACA,mBAAA;AACA,iBAAA;AACA,aAAA;;AAIJ,OAAA,CAAA,SAAA,EAAA;AACE,GAAA;AACE,aAAA;;;AAGJ;AACC,SAAA;AACI,eAAA;;",
+  "names": []
+}

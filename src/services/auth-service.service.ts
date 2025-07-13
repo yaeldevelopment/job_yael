@@ -6,12 +6,13 @@ import { LocalStorageService } from './local-storage.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private isLoggedInSubject = new BehaviorSubject<number>(3);
+  private isLoggedInSubject = new BehaviorSubject<number>(0);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
   
   private getInitialLoginState(): number {
     if (typeof window !== 'undefined' && window.localStorage) {    
-         return localStorage.getItem('Employee') ? 2 : 1;
+    
+         return localStorage.getItem('Employee') ? 2 :(localStorage.getItem('Employerse')?3: 1);
     }
     return 0;
   }
@@ -34,6 +35,7 @@ export class AuthService {
     if (typeof window !== 'undefined' && window.localStorage) {
           localStorage.clear();
     this.isLoggedInSubject.next(1);
+    
     }
 
   }

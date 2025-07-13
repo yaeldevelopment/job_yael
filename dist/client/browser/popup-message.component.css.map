@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/components/popup-message/popup-message.component.scss"],
+  "sourcesContent": [".dialog-container {\r\n    text-align: center;\r\n    padding: 20px;\r\n  \r\n    p {\r\n      font-size: 18px;\r\n      margin-bottom: 15px;\r\n    }\r\n  \r\n    .buttons {\r\n      display: flex;\r\n      justify-content: center;\r\n      gap: 10px;\r\n  \r\n      button {\r\n        padding: 8px 15px;\r\n        border: none;\r\n        cursor: pointer;\r\n        border-radius: 5px;\r\n        font-size: 16px;\r\n      }\r\n  \r\n      .confirm-btn {\r\n        background-color: #4caf50;\r\n        color: white;\r\n      }\r\n  \r\n      .cancel-btn {\r\n        background-color: #f44336;\r\n        color: white;\r\n      }\r\n    }\r\n  }\r\n  "],
+  "mappings": ";AAAA,CAAA;AACI,cAAA;AACA,WAAA;;AAEA,CAJJ,iBAII;AACE,aAAA;AACA,iBAAA;;AAGF,CATJ,iBASI,CAAA;AACE,WAAA;AACA,mBAAA;AACA,OAAA;;AAEA,CAdN,iBAcM,CALF,QAKE;AACE,WAAA,IAAA;AACA,UAAA;AACA,UAAA;AACA,iBAAA;AACA,aAAA;;AAGF,CAtBN,iBAsBM,CAbF,QAaE,CAAA;AACE,oBAAA;AACA,SAAA;;AAGF,CA3BN,iBA2BM,CAlBF,QAkBE,CAAA;AACE,oBAAA;AACA,SAAA;;",
+  "names": []
+}

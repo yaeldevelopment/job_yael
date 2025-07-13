@@ -1,10 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import employees from '../../models/employees';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UploadService } from '../../services/upload-service.service';
 import { HttpClient } from '@angular/common/http';
-import server from '../../models/api';
 import { LocalStorageService } from '../../services/local-storage.service';
+import { employerse } from '../../models/employerse';
+
 @Component({
   selector: 'app-details',
   standalone: true,
@@ -12,115 +13,114 @@ import { LocalStorageService } from '../../services/local-storage.service';
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
-export class DetailsComponent {
-  @ViewChild('fileInput') fileInput!: ElementRef;
-employee!:employees;
-safeResumeUrl: SafeResourceUrl = '';
-selectedFile: File | null = null; // קובץ שהמשתמש בחר
-uploadedFileUrl: SafeResourceUrl | null = null; // נתיב הקובץ שיוצג למשתמש
-existingFileHash: string | null = null; // ה-Hash של הקובץ הקיים
-resumeUrl: string = '';
-current_employee!:employees;
- fileInputKey = 0;
-isUploading: boolean = false;
-ngOnInit() {
-  if (this.employee.resume) {
-    this.resumeUrl = this.employee.resume + '?v=' + new Date().getTime();
+export class DetailsComponent implements OnInit {
+  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
 
+  employee: employees | null = null;
+  employerse: employerse | null = null;
+  resumeUrl: string = '';
+  selectedFile: File | null = null;
+  fileInputKey = 0;
+  isUploading = false;
+
+  constructor(
+    public sanitizer: DomSanitizer,
+    private uploadService: UploadService,
+    private http: HttpClient,
+    private localStorageService: LocalStorageService
+  ) {
+    const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
+    const savedEmployerse = this.localStorageService.getItemWithExpiry("Employerse");
+
+    if (savedEmployee?.value) {
+      const e = savedEmployee.value;
+      this.employee = new employees(
+        e.id,
+        '', // לא שומרים סיסמה
+        e.mail,
+        e.first_name,
+        e.last_name,
+        e.birth_date,
+        e.phone,
+        e.resume
+      );
+    } else if (savedEmployerse?.value) {
+      const e = savedEmployerse.value;
+      this.employerse = new employerse(
+        e.id,
+        e.mail,
+        '', // לא שומרים סיסמה
+        e.phone,
+        e.address,
+        e.first_name,
+        e.last_name,
+        e.birth_date
+      );
+    }
   }
-}
 
-constructor( public sanitizer: DomSanitizer,private uploadService:UploadService,private http: HttpClient,private localStorageService:LocalStorageService){
-  const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
+  ngOnInit(): void {
+    if (this.employee?.resume) {
+      this.resumeUrl = this.employee.resume + '?v=' + new Date().getTime();
+    }
+  }
 
-  if (savedEmployee) {
-    let employeeObject= savedEmployee.value;
-   
-   this.employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
+  get safeResumeUrl(): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(this.resumeUrl || '');
+  }
 
-}}
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input?.files?.[0];
 
-// כאשר המשתמש בוחר קובץ
-onFileSelected(event: any) {
-  const file: File = event.target.files[0];
-  if (!file) return;
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
 
-  // בדיקה אם הקובץ החדש זהה לקובץ הקיים
-  this.http.get(this.employee.resume, { responseType: 'blob' }).subscribe({
-    next: async (fileBlob) => {
-      
-    },
-    error: () => console.warn('⚠️ לא נמצא קובץ קיים למשתמש')
-  });
-
-
-  this.selectedFile = file;
-}
-async calculateHash(file: Blob): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-  return Array.from(new Uint8Array(hashBuffer)).map(byte => byte.toString(16).padStart(2, '0')).join('');
-}
-// העלאת קובץ חדש
-   
-  uploadFile() {
-    if (!this.selectedFile) return;
-
-    this.isUploading = true; // נועל את הכפתור
-    if (!this.selectedFile || !this.employee.mail) {
-      alert('❌ יש להזין אימייל ולבחור קובץ להעלאה.');
+  uploadFile(): void {
+    if (!this.selectedFile || !this.employee?.mail) {
+      alert('❌ יש להתחבר עם מייל ולבחור קובץ PDF.');
       return;
     }
-  
 
-const allowedTypes = [
-  "application/pdf",
-
-];
-
-if (!allowedTypes.includes(this.selectedFile.type)) {
-  alert('❌ יש להעלות קובץ מהסיומות הבאות: .pdf');
-  return;
-}
-
-
-this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe({
-  next: (response: { message: string; path: string }) => {
-    // מוסיפים query param רנדומלי כדי לעקוף cache
-    if(response){
-         this.resumeUrl = response.path + '?v=' + new Date().getTime();
-
-    // עדכון הנתיב לקובץ ב-employee
-    this.employee.resume = response.path;
-
-    // קבלת האובייקט הקודם מה-localStorage
-    const employeeData = this.localStorageService.getItemWithExpiry("Employee");
-
-    if (employeeData) {
-      const expiryTime = JSON.parse(localStorage.getItem("Employee")!).expiry;
-    
-
-      // שמירה מחדש עם expiry הקודם:
-      this.localStorageService.setItemWithExpiry("Employee", this.employee, expiryTime, true);
+    const allowedTypes = ["application/pdf"];
+    if (!allowedTypes.includes(this.selectedFile.type)) {
+      alert('❌ ניתן להעלות רק קובץ PDF.');
+      return;
     }
-    
-    this.fileInputKey++; // מאפס את ה-input על ידי שינוי ה-key
-    this.selectedFile = null;
-    this.fileInput.nativeElement.value = '';
-    }
- 
-  },
 
-  error: (error) => {
-    console.error("Error uploading file:", error);
-  },
+    this.isUploading = true;
 
-  complete: () => {
-    // שחרור הכפתור לאחר סיום (בהצלחה או כישלון)
-    this.isUploading = false;
+    this.uploadService.uploadPDF(this.selectedFile, this.employee.mail).subscribe({
+      next: (response: { message: string; path: string }) => {
+        if (!response?.path) {
+          alert('⚠️ ההעלאה נכשלה.');
+          return;
+        }
+
+        this.resumeUrl = response.path + '?v=' + new Date().getTime();
+        this.employee!.resume = response.path;
+
+        const oldData = this.localStorageService.getItemWithExpiry("Employee");
+        const expiry = oldData?.expiry;
+
+        if (expiry) {
+          const cleanEmployee = { ...this.employee, password: '' };
+          this.localStorageService.setItemWithExpiry("Employee", cleanEmployee, expiry, true);
+        }
+
+        this.fileInputKey++;
+        this.selectedFile = null;
+        this.fileInput.nativeElement.value = '';
+      },
+      error: (err) => {
+        console.error('שגיאה בהעלאה:', err);
+        alert('❌ שגיאה בהעלאת קובץ, נסה שוב.');
+      },
+      complete: () => {
+        this.isUploading = false;
+      }
+    });
   }
-});
-}
-
-
 }

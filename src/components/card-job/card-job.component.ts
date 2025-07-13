@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import Jobs from '../../models/Jobs';
 import { AuthService } from '../../services/auth-service.service';
 import { NotificationService } from '../../services/notification-service.service';
 import { EmployerseService } from '../../services/employerse.service';
@@ -8,6 +7,8 @@ import employees from '../../models/employees';
 import { EmployeesService } from '../../services/employees.service';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { JobsService } from '../../services/jobs.service';
+import { Job } from '../../models/Jobs';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-card-job',
@@ -16,92 +17,110 @@ import { JobsService } from '../../services/jobs.service';
   templateUrl: './card-job.component.html',
   styleUrl: './card-job.component.scss'
 })
-export class CardJobComponent implements OnInit{
-  list_employerse!:employerse[];
-isLoggedIn: Number |null= -1;
-current_employee!:employees;
-isLoading = false;
-progress = 0;
+export class CardJobComponent implements OnInit {
+  list_employerse: employerse[] = [];
+  isLoggedIn: number | null = -1;
+  current_employee!: employees;
+  isLoading = false;
+  progress = 0;
+  loadingInterval: any;
+  buttonDisabled = false;
 
+  @Input() job!: Job;
+
+  constructor(
+    private authService: AuthService,
+    private notificationService: NotificationService,
+    private serv_employerse: EmployerseService,
+    private localStorageService: LocalStorageService,
+    private serv_job: JobsService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
-      const savedEmployee = this.localStorageService.getItemWithExpiry("Employee");
-      if (savedEmployee) {
-        let employeeObject= savedEmployee.value;
+    const savedEmployee = this.localStorageService.getItemWithExpiry('Employee');
+    if (savedEmployee?.value) {
+      const e = savedEmployee.value;
+      this.current_employee = new employees(
+        e.id, e.password, e.mail, e.first_name, e.last_name, e.birth_date, e.phone, e.resume
+      );
+    }
 
-       this.current_employee=new employees(employeeObject.id,employeeObject.password,employeeObject.mail,employeeObject.first_name,employeeObject.last_name,employeeObject.birth_date,employeeObject.phone,employeeObject.resume)
-      }
     this.authService.isLoggedIn$.subscribe(status => {
       this.isLoggedIn = status;
     });
-    this.serv_employerse.get_all().subscribe((x:employerse[])=>{
-  this.list_employerse=x;
+
+    this.serv_employerse.get_all().subscribe({
+      next: (res) => this.list_employerse = res,
+      error: (err) => {
+        console.error('שגיאה בקבלת מעסיקים', err);
+        this.notificationService.showPopup("error", "שגיאה בטעינת נתוני מעסיקים", "נסה שוב");
+      }
     });
-    
-   
   }
 
-@Input()
-job!:Jobs
+  startLoading() {
+    this.isLoading = true;
+    this.progress = 0;
+    const step = 5;
 
-constructor(private authService: AuthService,private notificationService:NotificationService,private serv_employerse:EmployerseService,private localStorageService:LocalStorageService,private serv_job:JobsService) {}
+    this.loadingInterval = setInterval(() => {
+      if (this.progress < 90) {
+        this.progress += step;
+      }
+    }, 300);
+  }
 
+  stopLoading() {
+    clearInterval(this.loadingInterval);
+    this.progress = 100;
+    this.isLoading = false;
+  }
 
-startLoading() {
-  this.isLoading = true;
-  this.progress = 0;
-  const step = 5; // תוסיפי פחות כל פעם
+  sanitize(html: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
 
-  this.loadingInterval = setInterval(() => {
-    if (this.progress < 90) { // לא תגיע ל-100 לבד, מחכה לסיום
-      this.progress += step;
+  Send_Resume(job: Job) {
+    if (this.isLoggedIn !== 2) {
+      this.notificationService.showPopup("error", "אינך מחובר למערכת", "אנא התחבר למערכת");
+      return;
     }
-  }, 300); // זמן קצר יותר
-}
-loadingInterval: any;
-stopLoading() {
-  clearInterval(this.loadingInterval);
-  this.progress = 100; // מסיים טעינה
-  this.isLoading = false;
-}
-buttonDisabled: boolean = false;
 
-Send_Resume(job: Jobs) {
+    if (!this.current_employee) {
+      this.notificationService.showPopup("error", "התחברות נכשלה", "נסה שוב מאוחר יותר");
+      return;
+    }
 
-  if (this.isLoggedIn==2) {
-    try {
-      this.buttonDisabled = true; // נועל את הכפתור מיד
-      let mail = this.list_employerse.filter(x => x.idManager == job.employer)[0].mail;
-      this.startLoading(); // מתחיל טעינה
+    const employer = this.list_employerse.find(x => x.id === job.employer);
+    if (!employer?.mail) {
+      this.notificationService.showPopup("error", "שגיאה", "לא נמצא מייל מעסיק");
+      return;
+    }
 
-      this.serv_job.send_resum(job, mail, this.current_employee).subscribe({
-        next: (x: any) => {
-          // עדכון ה-employees_send
-       
-          if (!job.employees_send.includes(this.current_employee.id)) {
-            job.employees_send.push(this.current_employee.id);
-            this.serv_job.setJob_Send_Resum(this.current_employee.id,job);
-         
-          }
-        },
-        error: (err) => {
-          console.error('שגיאה', err);
-          this.notificationService.showPopup("error", "שגיאה בשליחת קו״ח", "נסה שוב");
-        },
-        complete: () => { 
-           job.jobSentStatus=false;
-          // כאן עוצרים את הטעינה ומשחררים כפתור
-          this.stopLoading();
-          this.buttonDisabled = false;
+    if (!Array.isArray(job.employees_send)) {
+      job.employees_send = [];
+    }
+
+    this.buttonDisabled = true;
+    this.startLoading();
+
+    this.serv_job.send_resum(job, employer.mail, this.current_employee).subscribe({
+      next: () => {
+        if (!job.employees_send.includes(this.current_employee.id)) {
+          job.employees_send.push(this.current_employee.id);
+          this.serv_job.setJob_Send_Resum(this.current_employee.id, job);
         }
-      });
-    } catch (err) {
-      console.error('שגיאה כללית', err);
-      this.buttonDisabled = false;
-      this.stopLoading();
-    }
-  } else {
-    this.notificationService.showPopup("error", "אינך מחובר למערכת", "אנא התחבר למערכת");
+      },
+      error: (err) => {
+        console.error('שגיאה בשליחת קו״ח', err);
+        this.notificationService.showPopup("error", "שגיאה בשליחת קו״ח", "נסה שוב");
+      },
+      complete: () => {
+        job.jobSentStatus = false;
+        this.stopLoading();
+        this.buttonDisabled = false;
+      }
+    });
   }
-}
 }

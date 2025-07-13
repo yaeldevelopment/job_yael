@@ -1,33 +1,45 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../services/auth-service.service';
 import { PopupMessageComponent } from '../popup-message/popup-message.component';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { LocalStorageService } from '../../services/local-storage.service';
+
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.component.html',
   standalone: true,
-  imports: [AsyncPipe],
-  styleUrls: ['./header.component.scss']
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
+  imports: [ RouterOutlet,RouterLink]
 })
 export class HeaderComponent {
-  isLoggedIn$!: Observable<number>;
+  is_login: number=0;
 
   constructor(
     private dialog: MatDialog,
     private router: Router,
-    private authService: AuthService,
+ private localStorageService:LocalStorageService
   ) {
-    this.isLoggedIn$ = this.authService.isLoggedIn$;
+   if(this.localStorageService.getItemWithExpiry("Employee"))
+   {
+    this.is_login=1;
+   }
+   else if(this.localStorageService.getItemWithExpiry("Employerse"))
+   {
+      this.is_login=2;
+   }
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/']);
-    window.location.reload();
+  async logout() {
+    try {
+      await  localStorage.clear();
+           window.location.reload();
+    } catch {
+      // לא מדפיס שגיאה - אבטחה
+    }
   }
 
   openDetails() {
@@ -41,7 +53,7 @@ export class HeaderComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result === true) {
         this.logout();
       }
     });

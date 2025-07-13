@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/components/not-found/not-found.component.scss", "src/varibles.scss"],
+  "sourcesContent": ["\r\n@import \"../../varibles.scss\";\r\n.not-found-container {\r\n  text-align: center;\r\n  margin-top: 50px;\r\n  color: $black;\r\n\r\n  h2 {\r\n    font-size: 2rem;\r\n    font-weight: bold;\r\n  }\r\n\r\n  p {\r\n    font-size: 1.2rem;\r\n  }\r\n\r\n  .home-link {\r\n    display: inline-block;\r\n    margin-top: 20px;\r\n    padding: 10px 20px;\r\n    font-size: 1rem;\r\n    color: white;\r\n    background-color: $back_color;\r\n    text-decoration: none;\r\n    border-radius: 5px;\r\n    cursor: pointer;\r\n    transition: 0.3s ease-in-out;\r\n\r\n    &:hover {\r\n      background-color: darken($back_color, 10%);\r\n    }\r\n  }\r\n}\r\n", "$back_color: #68235b;\r\n$black:#000;\r\n$text_color: #ffffff;"],
+  "mappings": ";AAEA,CAAA;AACE,cAAA;AACA,cAAA;AACA,SCJK;;ADML,CALF,oBAKE;AACE,aAAA;AACA,eAAA;;AAGF,CAVF,oBAUE;AACE,aAAA;;AAGF,CAdF,oBAcE,CAAA;AACE,WAAA;AACA,cAAA;AACA,WAAA,KAAA;AACA,aAAA;AACA,SAAA;AACA,oBCtBS;ADuBT,mBAAA;AACA,iBAAA;AACA,UAAA;AACA,cAAA,KAAA;;AAEA,CA1BJ,oBA0BI,CAZF,SAYE;AACE,oBAAA,IAAA,aAAA,EAAA,aAAA,EAAA;;",
+  "names": []
+}

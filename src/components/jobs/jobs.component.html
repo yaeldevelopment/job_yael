@@ -1,22 +1,25 @@
-
 <div class="row">
-    @if (Jobs$ | async ;as jobs_list) {
-        @if (jobs_list != null) {
-    @for (item of jobs_list| paginate: { itemsPerPage: 1, currentPage: currentPage }; track $index  ) {
-      
-        <app-card-job class="col-md-8 col-12"
-        [job]="item"></app-card-job>
-    }  
-    <pagination-controls
-    class="col-md-8 col-12"
-    (pageChange)="currentPage = $event"
-    previousLabel=""
-    nextLabel="">
-  </pagination-controls>
+  @if (Jobs$ | async; as jobs_list) {
+    @if (jobs_list!=null && jobs_list.length > 0) {
+      @for (item of jobs_list | paginate: { itemsPerPage: 3, currentPage: currentPage }; track $index) {
+        <app-card-job
+          class="col-md-8 col-12 mb-3"
+          [job]="item">
+        </app-card-job>
+      }
 
-}
-}
-   
-@else if(isLoading){
+      <pagination-controls
+        class="col-md-8 col-12"
+        (pageChange)="currentPage = $event"
+        previousLabel=""
+        nextLabel="">
+      </pagination-controls>
+    } @else {
+      <div class="col-12 text-center mt-4">
+        אין משרות להצגה כרגע.
+      </div>
+    }
+  } @else if (isLoading) {
     <app-loading></app-loading>
-}  </div>
+  }
+</div>

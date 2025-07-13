@@ -9,11 +9,13 @@ export class Auth_Login implements CanActivate {
   constructor(private router: Router,private localStorageService:LocalStorageService) {}
 
   canActivate(): boolean {
-    const isAuthenticated = !!this.localStorageService.getItemWithExpiry('Employee'); // בדיקת התחברות
+    const isAuthenticated = !!this.localStorageService.getItemWithExpiry('Employee')||!!this.localStorageService.getItemWithExpiry('Employerse'); // בדיקת התחברות
+
     if (isAuthenticated) {
-      this.router.navigate(['/']); // הפניה לדף התחברות במקרה שהמשתמש לא מחובר
+      this.router.navigate(['/התחברות']); // הפניה לדף התחברות במקרה שהמשתמש לא מחובר
       return false;
     }
+     
     return true;
   }
 }

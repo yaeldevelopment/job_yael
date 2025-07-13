@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/components/row-employee/row-employee.component.scss", "src/varibles.scss"],
+  "sourcesContent": ["@import \"../../varibles.scss\";\r\n\r\n th, td {\r\n      border: 1px solid #ddd;\r\n      padding: 0.75rem 1rem;\r\n      text-align: right;\r\n      vertical-align: middle;\r\n      font-size: 0.95rem;\r\n          word-break: break-all;\r\n    white-space: break-spaces;\r\n    }\r\n\r\n    th {\r\n      background-color: #f8f8f8;\r\n      font-weight: bold;\r\n    }\r\n\r\n    tr:nth-child(even) {\r\n      background-color: #f9f9f9;\r\n    }\r\n\r\n    button {\r\n      margin-inline-start: 0.5rem;\r\n      padding: 0.3rem 0.4rem;\r\n      border: 1px solid $back_color;\r\n      background-color: white;\r\n      color: $back_color;\r\n      border-radius: 4px;\r\n      cursor: pointer;\r\n      transition: 0.3s;\r\n    }\r\n\r\n    button:hover {\r\n      background-color: $back_color;\r\n      color: white;\r\n    }", "$back_color: #68235b;\r\n$black:#000;\r\n$text_color: #ffffff;"],
+  "mappings": ";AAEC;AAAA;AACK,UAAA,IAAA,MAAA;AACA,WAAA,QAAA;AACA,cAAA;AACA,kBAAA;AACA,aAAA;AACI,cAAA;AACN,eAAA;;AAGA;AACE,oBAAA;AACA,eAAA;;AAGF,EAAA;AACE,oBAAA;;AAGF;AACE,uBAAA;AACA,WAAA,OAAA;AACA,UAAA,IAAA,MAAA;AACA,oBAAA;AACA,SC1BO;AD2BP,iBAAA;AACA,UAAA;AACA,cAAA;;AAGF,MAAA;AACE,oBCjCO;ADkCP,SAAA;;",
+  "names": []
+}

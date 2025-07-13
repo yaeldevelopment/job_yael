@@ -1,0 +1,52 @@
+// job-table.component.scss
+ tr.row{
+          margin: 0px auto !important;
+    }
+.job-table {
+ tbody{
+  border: 0px;
+ }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: right;
+    }
+  }
+
+  .form {
+    display: grid;
+    gap: 0.5rem;
+
+    input, textarea, button {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+  }
+}
+.job-table {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    direction: rtl;
+
+  }
+}
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
+h2{
+ color: #68235b; 
+     font-weight: bold;
+}
+
+
+
