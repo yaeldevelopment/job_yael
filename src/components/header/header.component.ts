@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../services/auth-service.service';
 import { PopupMessageComponent } from '../popup-message/popup-message.component';
-import { AsyncPipe, NgIf } from '@angular/common';
+
 import { LocalStorageService } from '../../services/local-storage.service';
 
 
